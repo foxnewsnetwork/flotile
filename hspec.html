@@ -3,7 +3,32 @@
 <body>
 
 <div id="haxe:trace"></div>
-<script type="text/javascript" src="out/flotile_test.js"></script>
-
+<script type="text/javascript" src="out/flotile.js"></script>
+<script type="text/javascript" src="lib/tooltip.js"></script>
+<link href="lib/extensions.css" media="screen" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="flotile_bridge.js"></script>
+<script type="text/javascript">
+	$(document).ready( function(){ 
+		var items = [
+			{ 
+				'description' : "item 01 test",
+				'tileset' : "madotsuki.png"
+			},
+			{
+				"description" : "item 02 test" ,
+				"tileset" : "madotsuki.png"
+			}
+		]; // end items
+		var tiles = NormalShop.Stock( items );
+		for(var k = 0; k < tiles.length; k++){ 
+			tiles[k].Show();
+			tiles[k].Size(175,75);
+			tiles[k].Move( k * 75, 0 );
+			tiles[k].click( function(e){ 
+				alert( e.pageX + " and " + e.pageY );
+			} );
+		} // end for
+	} );
+</script>
 </body>
 </html>

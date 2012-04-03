@@ -281,6 +281,7 @@ main.Shop.prototype.Stock = function(items) {
 			};
 		})());
 	}
+	return tiles;
 }
 main.Shop.prototype.__class__ = main.Shop;
 main.Blob = function(spec) {

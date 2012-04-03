@@ -22,7 +22,8 @@ class Shop {
 				Tooltip.hide();
 			} );
 		} // end for
-	}
+		return tiles;
+	} // end Stock
 	public static function main(){ 
 		var FUCKINGNIGGERS : Int = 14;
 	} // end main

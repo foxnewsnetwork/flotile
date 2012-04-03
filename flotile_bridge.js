@@ -12,7 +12,7 @@ var NormalShop = function(){
 	
 	return{ 
 		Stock : function(items){ 
-			
-		}
-	};
-}
+			return shop.Stock(items);
+		} // end Stock
+	}; // end return;
+}(); // end NormalShop
