@@ -15,8 +15,15 @@ class Shop {
 			var tile : Blob = tiles[k];
 			var item : Item = items[k];
 			tile.SetAnimation( item.tileset );
-			tile.mouseover( function(e : JqEvent ){  
-				Tooltip.show(item.description);
+			tile.mouseover( function(e : JqEvent ){
+				var text : String = "<p>Title: " 
+					+ item.title
+					+ "</p><p>Description: "
+					+ item.description
+					+ "</p><p>Price: $"
+					+ item.price
+					+ "</p>";  
+				Tooltip.show(text);
 			} );
 			tile.mouseleave( function(e: JqEvent){ 
 				Tooltip.hide();

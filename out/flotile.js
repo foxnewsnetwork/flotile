@@ -272,7 +272,8 @@ main.Shop.prototype.Stock = function(items) {
 		tile.SetAnimation(item[0].tileset);
 		tile.mouseover((function(item) {
 			return function(e) {
-				main.Tooltip.show(item[0].description);
+				var text = "<p>Title: " + item[0].title + "</p><p>Description: " + item[0].description + "</p><p>Price: $" + item[0].price + "</p>";
+				main.Tooltip.show(text);
 			};
 		})(item));
 		tile.mouseleave((function() {
