@@ -181,6 +181,16 @@ js.Boot.__init = function() {
 	$closure = js.Boot.__closure;
 }
 js.Boot.prototype.__class__ = js.Boot;
+if(typeof main=='undefined') main = {}
+main.Tooltip = function() { }
+main.Tooltip.__name__ = ["main","Tooltip"];
+main.Tooltip.show = function(text) {
+	tooltip.show(text);
+}
+main.Tooltip.hide = function() {
+	tooltip.hide();
+}
+main.Tooltip.prototype.__class__ = main.Tooltip;
 js.Lib = function() { }
 js.Lib.__name__ = ["js","Lib"];
 js.Lib.isIE = null;
@@ -197,7 +207,6 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
 js.Lib.prototype.__class__ = js.Lib;
-if(typeof main=='undefined') main = {}
 main.Specs = function(key,value) {
 	if( key === $_ ) return;
 	this.key = key;
@@ -249,10 +258,30 @@ main.Shop = function(p) {
 main.Shop.__name__ = ["main","Shop"];
 main.Shop.main = function() {
 	var FUCKINGNIGGERS = 14;
-	var myshop = new main.Shop();
-	myshop.items.push(new main.Blob());
 }
 main.Shop.prototype.items = null;
+main.Shop.prototype.Stock = function(items) {
+	var tiles = new Array();
+	this.items = items;
+	var _g1 = 0, _g = items.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		tiles.push(new main.Blob());
+		var tile = tiles[k];
+		var item = [items[k]];
+		tile.SetAnimation(item[0].tileset);
+		tile.mouseover((function(item) {
+			return function(e) {
+				main.Tooltip.show(item[0].description);
+			};
+		})(item));
+		tile.mouseleave((function() {
+			return function(e) {
+				main.Tooltip.hide();
+			};
+		})());
+	}
+}
 main.Shop.prototype.__class__ = main.Shop;
 main.Blob = function(spec) {
 	if( spec === $_ ) return;
@@ -354,6 +383,50 @@ js.Boot.__init();
 			return false;
 		return f(msg,[url+":"+line]);
 	}
+}
+{
+	var d = Date;
+	d.now = function() {
+		return new Date();
+	};
+	d.fromTime = function(t) {
+		var d1 = new Date();
+		d1["setTime"](t);
+		return d1;
+	};
+	d.fromString = function(s) {
+		switch(s.length) {
+		case 8:
+			var k = s.split(":");
+			var d1 = new Date();
+			d1["setTime"](0);
+			d1["setUTCHours"](k[0]);
+			d1["setUTCMinutes"](k[1]);
+			d1["setUTCSeconds"](k[2]);
+			return d1;
+		case 10:
+			var k = s.split("-");
+			return new Date(k[0],k[1] - 1,k[2],0,0,0);
+		case 19:
+			var k = s.split(" ");
+			var y = k[0].split("-");
+			var t = k[1].split(":");
+			return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+		default:
+			throw "Invalid date format : " + s;
+		}
+	};
+	d.prototype["toString"] = function() {
+		var date = this;
+		var m = date.getMonth() + 1;
+		var d1 = date.getDate();
+		var h = date.getHours();
+		var mi = date.getMinutes();
+		var s = date.getSeconds();
+		return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d1 < 10?"0" + d1:"" + d1) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+	};
+	d.prototype.__class__ = d;
+	d.__name__ = ["Date"];
 }
 {
 	/*!
