@@ -197,16 +197,26 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
 js.Lib.prototype.__class__ = js.Lib;
-if(typeof haxe=='undefined') haxe = {}
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	js.Boot.__trace(v,infos);
+if(typeof main=='undefined') main = {}
+main.Specs = function(key,value) {
+	if( key === $_ ) return;
+	this.key = key;
+	this.value = value;
+	this.length = key.length;
+	if(this.length != value.length) {
+	}
 }
-haxe.Log.clear = function() {
-	js.Boot.__clear_trace();
+main.Specs.__name__ = ["main","Specs"];
+main.Specs.prototype.key = null;
+main.Specs.prototype.value = null;
+main.Specs.prototype.length = null;
+main.Specs.prototype.Length = function() {
+	return this.length;
 }
-haxe.Log.prototype.__class__ = haxe.Log;
+main.Specs.prototype.get = function(n) {
+	return { key : this.key[n], value : this.value[n]};
+}
+main.Specs.prototype.__class__ = main.Specs;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -232,17 +242,90 @@ Std.random = function(x) {
 	return Math.floor(Math.random() * x);
 }
 Std.prototype.__class__ = Std;
-if(typeof main=='undefined') main = {}
-main.Blob = function(id) {
+main.Shop = function(p) {
+	if( p === $_ ) return;
+	return;
+}
+main.Shop.__name__ = ["main","Shop"];
+main.Shop.main = function() {
+	var FUCKINGNIGGERS = 14;
+	var myshop = new main.Shop();
+	myshop.items.push(new main.Blob());
+}
+main.Shop.prototype.items = null;
+main.Shop.prototype.__class__ = main.Shop;
+main.Blob = function(spec) {
+	if( spec === $_ ) return;
+	var domBody = new js.JQuery("body");
+	domBody.append("<div id='" + main.Blob.tagname + "-container-" + main.Blob.id + "'></div>");
+	this.domContainer = new js.JQuery("#" + main.Blob.tagname + "-container-" + main.Blob.id);
+	this.domContainer.append("<div id='" + main.Blob.tagname + "-group-" + main.Blob.id + "'></div>");
+	this.domGroup = new js.JQuery("#" + main.Blob.tagname + "-group-" + main.Blob.id);
+	this.domGroup.append("<div id='" + main.Blob.tagname + "-sprites-" + main.Blob.id + "'></div>");
+	this.domSprites = new js.JQuery("#" + main.Blob.tagname + "-sprites-" + main.Blob.id);
+	main.Blob.id++;
+	this.domContainer.css("position","absolute");
+	this.domContainer.css("width","75px");
+	this.domContainer.css("height","75px");
+	this.domGroup.css("width","75px");
+	this.domGroup.css("height","75px");
+	this.domSprites.css("background-size","75px 75px");
+	this.domSprites.css("background-repeat","no-repeat");
+	this.domSprites.css("z-index","975");
+	this.domGroup.css("z-index","970");
+	this.domContainer.css("z-index","965");
+	if(spec != null) {
+		var _g1 = 0, _g = spec.Length();
+		while(_g1 < _g) {
+			var a = _g1++;
+			var data = spec.get(a);
+			this.domContainer.css(data.key,data.value);
+		}
+	}
 }
 main.Blob.__name__ = ["main","Blob"];
 main.Blob.main = function() {
-	haxe.Log.trace("hello world",{ fileName : "Blob.hx", lineNumber : 20, className : "main.Blob", methodName : "main"});
+	return;
 }
 main.Blob.prototype.domContainer = null;
 main.Blob.prototype.domGroup = null;
 main.Blob.prototype.domSprites = null;
-main.Blob.prototype.jq = null;
+main.Blob.prototype.domSpecs = null;
+main.Blob.prototype.Move = function(x,y) {
+	this.domContainer.css("left",x + "px");
+	this.domContainer.css("top",y + "px");
+}
+main.Blob.prototype.Size = function(width,height) {
+	var s = width + "px " + height + "px";
+	this.domSprites.css("background-size",s);
+	this.domSprites.css("width",width + "px");
+	this.domSprites.css("height",height + "px");
+	this.domContainer.css("width",width + "px");
+	this.domContainer.css("height",height + "px");
+	this.domGroup.css("width",width + "px");
+	this.domGroup.css("height",height + "px");
+}
+main.Blob.prototype.Hide = function() {
+	this.domContainer.hide();
+}
+main.Blob.prototype.Show = function() {
+	this.domContainer.show();
+}
+main.Blob.prototype.Html = function(text) {
+	this.domSprites.append(text);
+}
+main.Blob.prototype.SetAnimation = function(image) {
+	this.domSprites.css("background-image","url('" + image + "')");
+}
+main.Blob.prototype.click = function(call) {
+	this.domSprites.click(call);
+}
+main.Blob.prototype.mouseover = function(call) {
+	this.domSprites.mouseover(call);
+}
+main.Blob.prototype.mouseleave = function(call) {
+	this.domSprites.mouseleave(call);
+}
 main.Blob.prototype.__class__ = main.Blob;
 IntIter = function(min,max) {
 	if( min === $_ ) return;
@@ -331,4 +414,6 @@ js.Boot.__init();
 	};
 }
 js.Lib.onerror = null;
-main.Blob.main()
+main.Blob.id = 0;
+main.Blob.tagname = "inGidio-blobform-" + Math.round(Math.random() * 1000);
+main.Shop.main()

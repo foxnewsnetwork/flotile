@@ -15,6 +15,11 @@ class Blob {
 	private var domSprites : JQuery;
 	// The css specifications
 	private var domSpecs : main.Specs;
+	
+	// DLL main function
+	public static function main(){ 
+		return;
+	} // end main
 		
 	public function new(?spec : main.Specs){ 
 		var domBody = new JQuery( "body" );
