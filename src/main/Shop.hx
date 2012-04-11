@@ -8,14 +8,19 @@ class Shop {
 		return;
 	} // end new
 	public function Stock(items : Array<Item>){ 
-		var tiles : Array<Blob> = new Array<Blob>();
+		var tiles : Array<Tile> = new Array<Tile>();
 		this.items = items;
 		for( k in 0...items.length ){ 
-			tiles.push( new Blob() );
-			var tile : Blob = tiles[k];
+			tiles.push( new Tile() );
+			var tile : Tile = tiles[k];
 			var item : Item = items[k];
 			tile.SetAnimation( item.tileset );
-			tile.mouseover( function(e : JqEvent ){
+			tile.Click( function(e : JqEvent){
+				Form.RemoveAll();
+				var payment : PaymentForm = new PaymentForm(item);
+				payment.Position( tile.Position() );
+			} );
+			tile.Mouseover( function(e : JqEvent ){
 				var text : String = "<p>Title: " 
 					+ item.title
 					+ "</p><p>Description: "
@@ -25,7 +30,7 @@ class Shop {
 					+ "</p>";  
 				Tooltip.show(text);
 			} );
-			tile.mouseleave( function(e: JqEvent){ 
+			tile.Mouseleave( function(e: JqEvent){ 
 				Tooltip.hide();
 			} );
 		} // end for

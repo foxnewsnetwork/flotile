@@ -191,6 +191,52 @@ main.Tooltip.hide = function() {
 	tooltip.hide();
 }
 main.Tooltip.prototype.__class__ = main.Tooltip;
+main.Element = function(p) {
+	if( p === $_ ) return;
+	this.position = { x : 0, y : 0};
+	this.size = { width : 75, height : 75};
+	var domBody = new js.JQuery("body");
+	domBody.append("<div id='" + main.Element.NAME + "-" + main.Element.ID + "'></div>");
+	this.domContainer = new js.JQuery("#" + main.Element.NAME + "-" + main.Element.ID);
+	main.Element.ID += 1;
+	this.CSS("z-index","967");
+}
+main.Element.__name__ = ["main","Element"];
+main.Element.prototype.domContainer = null;
+main.Element.prototype.position = null;
+main.Element.prototype.size = null;
+main.Element.prototype.Position = function(pos) {
+	if(pos == null) return this.position;
+	this.position = pos;
+	this.domContainer.css("left",this.position.x + "px");
+	this.domContainer.css("top",this.position.y + "px");
+	return this.position;
+}
+main.Element.prototype.Size = function(siz) {
+	if(siz == null) return this.size;
+	this.size = siz;
+	this.domContainer.css("width",this.size.width + "px");
+	this.domContainer.css("height",this.size.height + "px");
+	return this.size;
+}
+main.Element.prototype.Remove = function() {
+	this.domContainer.remove();
+}
+main.Element.prototype.Hide = function() {
+	this.domContainer.hide();
+}
+main.Element.prototype.Show = function() {
+	this.domContainer.show();
+}
+main.Element.prototype.CSS = function(prop,value) {
+	this.domContainer.css(prop,value);
+}
+main.Element.prototype.HTML = function(html) {
+	if(html == null) return this.domContainer.html();
+	this.domContainer.append(html);
+	return html;
+}
+main.Element.prototype.__class__ = main.Element;
 js.Lib = function() { }
 js.Lib.__name__ = ["js","Lib"];
 js.Lib.isIE = null;
@@ -207,25 +253,6 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
 js.Lib.prototype.__class__ = js.Lib;
-main.Specs = function(key,value) {
-	if( key === $_ ) return;
-	this.key = key;
-	this.value = value;
-	this.length = key.length;
-	if(this.length != value.length) {
-	}
-}
-main.Specs.__name__ = ["main","Specs"];
-main.Specs.prototype.key = null;
-main.Specs.prototype.value = null;
-main.Specs.prototype.length = null;
-main.Specs.prototype.Length = function() {
-	return this.length;
-}
-main.Specs.prototype.get = function(n) {
-	return { key : this.key[n], value : this.value[n]};
-}
-main.Specs.prototype.__class__ = main.Specs;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -251,6 +278,87 @@ Std.random = function(x) {
 	return Math.floor(Math.random() * x);
 }
 Std.prototype.__class__ = Std;
+main.Form = function(it) {
+	if( it === $_ ) return;
+	main.Element.call(this);
+	this.item = it;
+	this.yes = new main.Tile();
+	this.no = new main.Tile();
+	this.yes.Mouseover(function(e) {
+		main.Tooltip.show("Confirm");
+	});
+	this.yes.Mouseleave(function(e) {
+		main.Tooltip.hide();
+	});
+	this.no.Mouseover(function(e) {
+		main.Tooltip.show("Cancel");
+	});
+	this.no.Mouseleave(function(e) {
+		main.Tooltip.hide();
+	});
+	this.no.Click((function(myform) {
+		return function(e) {
+			myform.Remove();
+		};
+	})(this));
+	main.Form.FORMS.push(this);
+}
+main.Form.__name__ = ["main","Form"];
+main.Form.__super__ = main.Element;
+for(var k in main.Element.prototype ) main.Form.prototype[k] = main.Element.prototype[k];
+main.Form.RemoveAll = function() {
+	var _g1 = 0, _g = main.Form.FORMS.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		main.Form.FORMS.pop().Remove();
+	}
+}
+main.Form.prototype.form = null;
+main.Form.prototype.yes = null;
+main.Form.prototype.no = null;
+main.Form.prototype.item = null;
+main.Form.prototype.Position = function(pos) {
+	if(pos == null) return main.Element.prototype.Position.call(this);
+	main.Element.prototype.Position.call(this,pos);
+	var size = this.Size();
+	this.yes.Position({ x : this.Position().x, y : pos.y});
+	this.no.Position({ x : this.Position().x + Math.floor(this.Size().width / 2), y : pos.y});
+	return main.Element.prototype.Position.call(this);
+}
+main.Form.prototype.Confirm = function(cb) {
+	this.yes.Click(cb);
+}
+main.Form.prototype.Cancel = function(cb) {
+	this.no.Click(cb);
+	if(cb == null) this.Remove();
+}
+main.Form.prototype.Remove = function() {
+	this.no.Remove();
+	this.yes.Remove();
+	main.Element.prototype.Remove.call(this);
+}
+main.Form.prototype.__class__ = main.Form;
+main.ConfirmationForm = function(item) {
+	if( item === $_ ) return;
+	main.Form.call(this,item);
+	this.HTML("<p>Confirm Purchase</p>");
+	this.Confirm((function(cof) {
+		return function(e) {
+			InGidio.cashier.Checkout({ item : item, payment : cof.paymentinfo});
+			cof.Remove();
+		};
+	})(this));
+}
+main.ConfirmationForm.__name__ = ["main","ConfirmationForm"];
+main.ConfirmationForm.__super__ = main.Form;
+for(var k in main.Form.prototype ) main.ConfirmationForm.prototype[k] = main.Form.prototype[k];
+main.ConfirmationForm.prototype.paymentinfo = null;
+main.ConfirmationForm.prototype.PaymentInfo = function(paydata) {
+	if(paydata == null) return this.paymentinfo;
+	this.paymentinfo = paydata;
+	return this.paymentinfo;
+}
+main.ConfirmationForm.prototype.__class__ = main.ConfirmationForm;
 main.Shop = function(p) {
 	if( p === $_ ) return;
 	return;
@@ -266,17 +374,24 @@ main.Shop.prototype.Stock = function(items) {
 	var _g1 = 0, _g = items.length;
 	while(_g1 < _g) {
 		var k = _g1++;
-		tiles.push(new main.Blob());
-		var tile = tiles[k];
+		tiles.push(new main.Tile());
+		var tile = [tiles[k]];
 		var item = [items[k]];
-		tile.SetAnimation(item[0].tileset);
-		tile.mouseover((function(item) {
+		tile[0].SetAnimation(item[0].tileset);
+		tile[0].Click((function(item,tile) {
+			return function(e) {
+				main.Form.RemoveAll();
+				var payment = new main.PaymentForm(item[0]);
+				payment.Position(tile[0].Position());
+			};
+		})(item,tile));
+		tile[0].Mouseover((function(item) {
 			return function(e) {
 				var text = "<p>Title: " + item[0].title + "</p><p>Description: " + item[0].description + "</p><p>Price: $" + item[0].price + "</p>";
 				main.Tooltip.show(text);
 			};
 		})(item));
-		tile.mouseleave((function() {
+		tile[0].Mouseleave((function() {
 			return function(e) {
 				main.Tooltip.hide();
 			};
@@ -285,79 +400,86 @@ main.Shop.prototype.Stock = function(items) {
 	return tiles;
 }
 main.Shop.prototype.__class__ = main.Shop;
-main.Blob = function(spec) {
-	if( spec === $_ ) return;
-	var domBody = new js.JQuery("body");
-	domBody.append("<div id='" + main.Blob.tagname + "-container-" + main.Blob.id + "'></div>");
-	this.domContainer = new js.JQuery("#" + main.Blob.tagname + "-container-" + main.Blob.id);
-	this.domContainer.append("<div id='" + main.Blob.tagname + "-group-" + main.Blob.id + "'></div>");
-	this.domGroup = new js.JQuery("#" + main.Blob.tagname + "-group-" + main.Blob.id);
-	this.domGroup.append("<div id='" + main.Blob.tagname + "-sprites-" + main.Blob.id + "'></div>");
-	this.domSprites = new js.JQuery("#" + main.Blob.tagname + "-sprites-" + main.Blob.id);
-	main.Blob.id++;
-	this.domContainer.css("position","absolute");
-	this.domContainer.css("width","75px");
-	this.domContainer.css("height","75px");
-	this.domGroup.css("width","75px");
-	this.domGroup.css("height","75px");
-	this.domSprites.css("background-size","75px 75px");
-	this.domSprites.css("background-repeat","no-repeat");
-	this.domSprites.css("z-index","975");
-	this.domGroup.css("z-index","970");
-	this.domContainer.css("z-index","965");
-	if(spec != null) {
-		var _g1 = 0, _g = spec.Length();
+main.PaymentForm = function(item) {
+	if( item === $_ ) return;
+	main.Form.call(this,item);
+	this.form = InGidioForm.build(main.PaymentForm.SPECS_PAYMENTFORM);
+	this.HTML(this.form);
+	this.Confirm((function(item1,pay) {
+		return function(e) {
+			var confirmation = new main.ConfirmationForm(item1);
+			confirmation.Position(pay.Position());
+			confirmation.PaymentInfo(pay.Get());
+			pay.Remove();
+		};
+	})(item,this));
+}
+main.PaymentForm.__name__ = ["main","PaymentForm"];
+main.PaymentForm.__super__ = main.Form;
+for(var k in main.Form.prototype ) main.PaymentForm.prototype[k] = main.Form.prototype[k];
+main.PaymentForm.prototype.Get = function() {
+	var content = InGidioForm.get();
+	return content;
+}
+main.PaymentForm.prototype.__class__ = main.PaymentForm;
+main.Tile = function(p) {
+	if( p === $_ ) return;
+	this.clicks = [];
+	this.mouseovers = [];
+	this.mouseleaves = [];
+	main.Element.call(this);
+	this.CSS("z-index","968");
+}
+main.Tile.__name__ = ["main","Tile"];
+main.Tile.__super__ = main.Element;
+for(var k in main.Element.prototype ) main.Tile.prototype[k] = main.Element.prototype[k];
+main.Tile.prototype.image = null;
+main.Tile.prototype.clicks = null;
+main.Tile.prototype.mouseovers = null;
+main.Tile.prototype.mouseleaves = null;
+main.Tile.prototype.SetAnimation = function(image) {
+	if(image == null) return this.image;
+	this.image = image;
+	this.CSS("background-image","url('" + image + "')");
+	return this.image;
+}
+main.Tile.prototype.Click = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.clicks.length;
 		while(_g1 < _g) {
-			var a = _g1++;
-			var data = spec.get(a);
-			this.domContainer.css(data.key,data.value);
+			var k = _g1++;
+			this.clicks[k](null);
 		}
+	} else {
+		this.clicks.push(cb);
+		this.domContainer.click(cb);
 	}
 }
-main.Blob.__name__ = ["main","Blob"];
-main.Blob.main = function() {
-	return;
+main.Tile.prototype.Mouseover = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.mouseovers.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.mouseovers[k](null);
+		}
+	} else {
+		this.mouseovers.push(cb);
+		this.domContainer.mouseover(cb);
+	}
 }
-main.Blob.prototype.domContainer = null;
-main.Blob.prototype.domGroup = null;
-main.Blob.prototype.domSprites = null;
-main.Blob.prototype.domSpecs = null;
-main.Blob.prototype.Move = function(x,y) {
-	this.domContainer.css("left",x + "px");
-	this.domContainer.css("top",y + "px");
+main.Tile.prototype.Mouseleave = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.mouseleaves.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.mouseleaves[k](null);
+		}
+	} else {
+		this.mouseleaves.push(cb);
+		this.domContainer.mouseleave(cb);
+	}
 }
-main.Blob.prototype.Size = function(width,height) {
-	var s = width + "px " + height + "px";
-	this.domSprites.css("background-size",s);
-	this.domSprites.css("width",width + "px");
-	this.domSprites.css("height",height + "px");
-	this.domContainer.css("width",width + "px");
-	this.domContainer.css("height",height + "px");
-	this.domGroup.css("width",width + "px");
-	this.domGroup.css("height",height + "px");
-}
-main.Blob.prototype.Hide = function() {
-	this.domContainer.hide();
-}
-main.Blob.prototype.Show = function() {
-	this.domContainer.show();
-}
-main.Blob.prototype.Html = function(text) {
-	this.domSprites.append(text);
-}
-main.Blob.prototype.SetAnimation = function(image) {
-	this.domSprites.css("background-image","url('" + image + "')");
-}
-main.Blob.prototype.click = function(call) {
-	this.domSprites.click(call);
-}
-main.Blob.prototype.mouseover = function(call) {
-	this.domSprites.mouseover(call);
-}
-main.Blob.prototype.mouseleave = function(call) {
-	this.domSprites.mouseleave(call);
-}
-main.Blob.prototype.__class__ = main.Blob;
+main.Tile.prototype.__class__ = main.Tile;
 IntIter = function(min,max) {
 	if( min === $_ ) return;
 	this.min = min;
@@ -376,6 +498,18 @@ IntIter.prototype.__class__ = IntIter;
 $_ = {}
 js.Boot.__res = {}
 js.Boot.__init();
+{
+	Math.__name__ = ["Math"];
+	Math.NaN = Number["NaN"];
+	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
+	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
+	Math.isFinite = function(i) {
+		return isFinite(i);
+	};
+	Math.isNaN = function(i) {
+		return isNaN(i);
+	};
+}
 {
 	js.Lib.document = document;
 	js.Lib.window = window;
@@ -476,19 +610,10 @@ js.Boot.__init();
 	Enum = { };
 	Void = { __ename__ : ["Void"]};
 }
-{
-	Math.__name__ = ["Math"];
-	Math.NaN = Number["NaN"];
-	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
-	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
-	Math.isFinite = function(i) {
-		return isFinite(i);
-	};
-	Math.isNaN = function(i) {
-		return isNaN(i);
-	};
-}
+main.Element.ID = 0;
+main.Element.NAME = "InGidio-Tile-Element-" + Math.floor(10000 * Math.random());
 js.Lib.onerror = null;
-main.Blob.id = 0;
-main.Blob.tagname = "inGidio-blobform-" + Math.round(Math.random() * 1000);
+main.Form.IMAGES = { yes : SHOP_IMAGE_APPROVE, no : SHOP_IMAGE_CANCEL};
+main.Form.FORMS = [];
+main.PaymentForm.SPECS_PAYMENTFORM = main.PaymentForm.SPECS_PAYMENTFORM;
 main.Shop.main()
