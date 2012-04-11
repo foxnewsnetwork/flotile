@@ -21,10 +21,10 @@ class Form extends Element{
 		super.Position(pos);
 		var size = this.Size();
 		this.yes.Position({
-			x : this.Position().x , y : pos.y 
+			x : this.Position().x + 10 , y : pos.y + this.Size().height - this.yes.Size().height - 10
 		});
 		this.no.Position({
-			x : this.Position().x + Math.floor(this.Size().width / 2), y : pos.y
+			x : this.Position().x + this.Size().width - this.no.Size().width , y : pos.y + this.Size().height - this.yes.Size().height - 10
 		});
 		return super.Position();
 	} // end move
@@ -42,6 +42,20 @@ class Form extends Element{
 		this.item = it;
 		this.yes = new Tile();
 		this.no = new Tile();
+		this.CSS("border-radius", "10px");
+		this.CSS("-moz-border-radius", "10px");
+		this.CSS("border", "2px solid red");
+		this.CSS("padding-left", "0.5em");
+		this.yes.CSS("border", "2px solid black");
+		this.no.CSS("border", "2px solid black");
+		this.yes.CSS("border-radius", "10px");
+		this.yes.CSS("-moz-border-radius", "10px");
+		this.no.CSS("border-radius", "10px");
+		this.no.CSS("-moz-border-radius", "10px");
+		this.yes.Size({width : 50, height : 50 });
+		this.no.Size({width : 50, height : 50 });
+		this.yes.SetAnimation(Form.IMAGES.yes);
+		this.no.SetAnimation(Form.IMAGES.no);
 		this.yes.Mouseover(function(e : JqEvent){ 
 			Tooltip.show("Confirm");
 		});

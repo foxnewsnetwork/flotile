@@ -16,6 +16,7 @@ class Element {
 		this.domContainer = new JQuery( "#" + Element.NAME + "-" + Element.ID );
 		Element.ID += 1;
 		this.CSS("z-index", "967");
+		this.CSS("position", "absolute");
 	} // end new
 	
 	public function Position( ?pos : { x : Int, y :Int } ) : { x : Int, y : Int }{ 
@@ -35,6 +36,7 @@ class Element {
 		this.size = siz;
 		this.domContainer.css("width", this.size.width + "px");
 		this.domContainer.css("height", this.size.height + "px");
+		this.domContainer.css("background-size", this.size.width + "px " + this.size.height + "px");
 		return this.size;
 	} // end Size
 	

@@ -7,10 +7,11 @@ class ConfirmationForm extends Form {
 	public function new(item : Item){ 
 		super(item);
 		this.HTML("<p>Confirm Purchase</p>");
+		this.Size({width : 125, height : 125});
 		this.Confirm((function(cof : ConfirmationForm){ 
 			return function(e : JqEvent){ 
-				untyped InGidio.cashier.Checkout( { item : item, payment : cof.paymentinfo } );
 				cof.Remove();
+				Tooltip.hide();
 			}; // end return
 		})(this));// end Confirm
 	} //end new

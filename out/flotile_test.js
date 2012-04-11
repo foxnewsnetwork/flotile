@@ -181,6 +181,64 @@ js.Boot.__init = function() {
 	$closure = js.Boot.__closure;
 }
 js.Boot.prototype.__class__ = js.Boot;
+if(typeof main=='undefined') main = {}
+main.Tooltip = function() { }
+main.Tooltip.__name__ = ["main","Tooltip"];
+main.Tooltip.show = function(text) {
+	tooltip.show(text);
+}
+main.Tooltip.hide = function() {
+	tooltip.hide();
+}
+main.Tooltip.prototype.__class__ = main.Tooltip;
+main.Element = function(p) {
+	if( p === $_ ) return;
+	this.position = { x : 0, y : 0};
+	this.size = { width : 75, height : 75};
+	var domBody = new js.JQuery("body");
+	domBody.append("<div id='" + main.Element.NAME + "-" + main.Element.ID + "'></div>");
+	this.domContainer = new js.JQuery("#" + main.Element.NAME + "-" + main.Element.ID);
+	main.Element.ID += 1;
+	this.CSS("z-index","967");
+	this.CSS("position","absolute");
+}
+main.Element.__name__ = ["main","Element"];
+main.Element.prototype.domContainer = null;
+main.Element.prototype.position = null;
+main.Element.prototype.size = null;
+main.Element.prototype.Position = function(pos) {
+	if(pos == null) return this.position;
+	this.position = pos;
+	this.domContainer.css("left",this.position.x + "px");
+	this.domContainer.css("top",this.position.y + "px");
+	return this.position;
+}
+main.Element.prototype.Size = function(siz) {
+	if(siz == null) return this.size;
+	this.size = siz;
+	this.domContainer.css("width",this.size.width + "px");
+	this.domContainer.css("height",this.size.height + "px");
+	this.domContainer.css("background-size",this.size.width + "px " + this.size.height + "px");
+	return this.size;
+}
+main.Element.prototype.Remove = function() {
+	this.domContainer.remove();
+}
+main.Element.prototype.Hide = function() {
+	this.domContainer.hide();
+}
+main.Element.prototype.Show = function() {
+	this.domContainer.show();
+}
+main.Element.prototype.CSS = function(prop,value) {
+	this.domContainer.css(prop,value);
+}
+main.Element.prototype.HTML = function(html) {
+	if(html == null) return this.domContainer.html();
+	this.domContainer.append(html);
+	return html;
+}
+main.Element.prototype.__class__ = main.Element;
 js.Lib = function() { }
 js.Lib.__name__ = ["js","Lib"];
 js.Lib.isIE = null;
@@ -197,26 +255,6 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
 js.Lib.prototype.__class__ = js.Lib;
-if(typeof main=='undefined') main = {}
-main.Specs = function(key,value) {
-	if( key === $_ ) return;
-	this.key = key;
-	this.value = value;
-	this.length = key.length;
-	if(this.length != value.length) {
-	}
-}
-main.Specs.__name__ = ["main","Specs"];
-main.Specs.prototype.key = null;
-main.Specs.prototype.value = null;
-main.Specs.prototype.length = null;
-main.Specs.prototype.Length = function() {
-	return this.length;
-}
-main.Specs.prototype.get = function(n) {
-	return { key : this.key[n], value : this.value[n]};
-}
-main.Specs.prototype.__class__ = main.Specs;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -242,99 +280,392 @@ Std.random = function(x) {
 	return Math.floor(Math.random() * x);
 }
 Std.prototype.__class__ = Std;
-main.Blob = function(spec) {
-	if( spec === $_ ) return;
-	var domBody = new js.JQuery("body");
-	domBody.append("<div id='" + main.Blob.tagname + "-container-" + main.Blob.id + "'></div>");
-	this.domContainer = new js.JQuery("#" + main.Blob.tagname + "-container-" + main.Blob.id);
-	this.domContainer.append("<div id='" + main.Blob.tagname + "-group-" + main.Blob.id + "'></div>");
-	this.domGroup = new js.JQuery("#" + main.Blob.tagname + "-group-" + main.Blob.id);
-	this.domGroup.append("<div id='" + main.Blob.tagname + "-sprites-" + main.Blob.id + "'></div>");
-	this.domSprites = new js.JQuery("#" + main.Blob.tagname + "-sprites-" + main.Blob.id);
-	main.Blob.id++;
-	this.domContainer.css("position","absolute");
-	this.domContainer.css("width","75px");
-	this.domContainer.css("height","75px");
-	this.domGroup.css("width","75px");
-	this.domGroup.css("height","75px");
-	this.domSprites.css("background-size","75px 75px");
-	this.domSprites.css("background-repeat","no-repeat");
-	this.domSprites.css("z-index","975");
-	this.domGroup.css("z-index","970");
-	this.domContainer.css("z-index","965");
-	if(spec != null) {
-		var _g1 = 0, _g = spec.Length();
-		while(_g1 < _g) {
-			var a = _g1++;
-			var data = spec.get(a);
-			this.domContainer.css(data.key,data.value);
-		}
+main.Form = function(it) {
+	if( it === $_ ) return;
+	main.Element.call(this);
+	this.item = it;
+	this.yes = new main.Tile();
+	this.no = new main.Tile();
+	this.CSS("border-radius","10px");
+	this.CSS("-moz-border-radius","10px");
+	this.CSS("border","2px solid red");
+	this.CSS("padding-left","0.5em");
+	this.yes.CSS("border","2px solid black");
+	this.no.CSS("border","2px solid black");
+	this.yes.CSS("border-radius","10px");
+	this.yes.CSS("-moz-border-radius","10px");
+	this.no.CSS("border-radius","10px");
+	this.no.CSS("-moz-border-radius","10px");
+	this.yes.Size({ width : 50, height : 50});
+	this.no.Size({ width : 50, height : 50});
+	this.yes.SetAnimation(main.Form.IMAGES.yes);
+	this.no.SetAnimation(main.Form.IMAGES.no);
+	this.yes.Mouseover(function(e) {
+		main.Tooltip.show("Confirm");
+	});
+	this.yes.Mouseleave(function(e) {
+		main.Tooltip.hide();
+	});
+	this.no.Mouseover(function(e) {
+		main.Tooltip.show("Cancel");
+	});
+	this.no.Mouseleave(function(e) {
+		main.Tooltip.hide();
+	});
+	this.no.Click((function(myform) {
+		return function(e) {
+			myform.Remove();
+		};
+	})(this));
+	main.Form.FORMS.push(this);
+}
+main.Form.__name__ = ["main","Form"];
+main.Form.__super__ = main.Element;
+for(var k in main.Element.prototype ) main.Form.prototype[k] = main.Element.prototype[k];
+main.Form.RemoveAll = function() {
+	var _g1 = 0, _g = main.Form.FORMS.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		main.Form.FORMS.pop().Remove();
 	}
 }
-main.Blob.__name__ = ["main","Blob"];
-main.Blob.prototype.domContainer = null;
-main.Blob.prototype.domGroup = null;
-main.Blob.prototype.domSprites = null;
-main.Blob.prototype.domSpecs = null;
-main.Blob.prototype.Move = function(x,y) {
-	this.domContainer.css("left",x + "px");
-	this.domContainer.css("top",y + "px");
+main.Form.prototype.form = null;
+main.Form.prototype.yes = null;
+main.Form.prototype.no = null;
+main.Form.prototype.item = null;
+main.Form.prototype.Position = function(pos) {
+	if(pos == null) return main.Element.prototype.Position.call(this);
+	main.Element.prototype.Position.call(this,pos);
+	var size = this.Size();
+	this.yes.Position({ x : this.Position().x + 10, y : pos.y + this.Size().height - this.yes.Size().height - 10});
+	this.no.Position({ x : this.Position().x + this.Size().width - this.no.Size().width, y : pos.y + this.Size().height - this.yes.Size().height - 10});
+	return main.Element.prototype.Position.call(this);
 }
-main.Blob.prototype.Size = function(width,height) {
-	var s = width + "px " + height + "px";
-	this.domSprites.css("background-size",s);
-	this.domSprites.css("width",width + "px");
-	this.domSprites.css("height",height + "px");
-	this.domContainer.css("width",width + "px");
-	this.domContainer.css("height",height + "px");
-	this.domGroup.css("width",width + "px");
-	this.domGroup.css("height",height + "px");
+main.Form.prototype.Confirm = function(cb) {
+	this.yes.Click(cb);
 }
-main.Blob.prototype.Hide = function() {
-	this.domContainer.hide();
+main.Form.prototype.Cancel = function(cb) {
+	this.no.Click(cb);
+	if(cb == null) this.Remove();
 }
-main.Blob.prototype.Show = function() {
-	this.domContainer.show();
+main.Form.prototype.Remove = function() {
+	this.no.Remove();
+	this.yes.Remove();
+	main.Element.prototype.Remove.call(this);
 }
-main.Blob.prototype.Html = function(text) {
-	this.domSprites.append(text);
-}
-main.Blob.prototype.SetAnimation = function(image) {
-	this.domSprites.css("background-image","url('" + image + "')");
-}
-main.Blob.prototype.click = function(call) {
-	this.domSprites.click(call);
-}
-main.Blob.prototype.mouseover = function(call) {
-	this.domSprites.mouseover(call);
-}
-main.Blob.prototype.mouseleave = function(call) {
-	this.domSprites.mouseleave(call);
-}
-main.Blob.prototype.__class__ = main.Blob;
-if(typeof unittests=='undefined') unittests = {}
-unittests.Blob_test = function(p) {
-	if( p === $_ ) return;
-	this.myblob = new main.Blob();
-}
-unittests.Blob_test.__name__ = ["unittests","Blob_test"];
-unittests.Blob_test.main = function() {
-	var test = new unittests.Blob_test();
-	test.integration_test();
-}
-unittests.Blob_test.prototype.myblob = null;
-unittests.Blob_test.prototype.integration_test = function() {
-	var image = "http://i907.photobucket.com/albums/ac271/Bash_Emm/180-1.jpg";
-	this.myblob.SetAnimation(image);
-	this.myblob.Move(22,31);
-	this.myblob.Size(150,150);
-	this.myblob.mouseover((function(blob) {
+main.Form.prototype.__class__ = main.Form;
+main.ConfirmationForm = function(item) {
+	if( item === $_ ) return;
+	main.Form.call(this,item);
+	this.HTML("<p>Confirm Purchase</p>");
+	this.Size({ width : 125, height : 125});
+	this.Confirm((function(cof) {
 		return function(e) {
-			blob.Move(33,43);
+			cof.Remove();
+			main.Tooltip.hide();
 		};
-	})(this.myblob));
+	})(this));
 }
-unittests.Blob_test.prototype.__class__ = unittests.Blob_test;
+main.ConfirmationForm.__name__ = ["main","ConfirmationForm"];
+main.ConfirmationForm.__super__ = main.Form;
+for(var k in main.Form.prototype ) main.ConfirmationForm.prototype[k] = main.Form.prototype[k];
+main.ConfirmationForm.prototype.paymentinfo = null;
+main.ConfirmationForm.prototype.PaymentInfo = function(paydata) {
+	if(paydata == null) return this.paymentinfo;
+	this.paymentinfo = paydata;
+	return this.paymentinfo;
+}
+main.ConfirmationForm.prototype.__class__ = main.ConfirmationForm;
+if(typeof unittests=='undefined') unittests = {}
+unittests.UnitTest = function(p) {
+	if( p === $_ ) return;
+	unittests.UnitTest.UnitTests.push(this);
+}
+unittests.UnitTest.__name__ = ["unittests","UnitTest"];
+unittests.UnitTest.main = function() {
+	var tiletest = new unittests.TileTest();
+	var formteset = new unittests.FormTest();
+	var _g1 = 0, _g = unittests.UnitTest.UnitTests.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		unittests.UnitTest.UnitTests[k].IntegrationTest();
+	}
+}
+unittests.UnitTest.prototype.IntegrationTest = function() {
+}
+unittests.UnitTest.prototype.__class__ = unittests.UnitTest;
+unittests.TileTest = function(p) {
+	if( p === $_ ) return;
+	unittests.UnitTest.call(this);
+	this.testsubject = new main.Tile();
+}
+unittests.TileTest.__name__ = ["unittests","TileTest"];
+unittests.TileTest.__super__ = unittests.UnitTest;
+for(var k in unittests.UnitTest.prototype ) unittests.TileTest.prototype[k] = unittests.UnitTest.prototype[k];
+unittests.TileTest.prototype.testsubject = null;
+unittests.TileTest.prototype.IntegrationTest = function() {
+	this.testsubject.SetAnimation(unittests.TileTest.IMAGE);
+	this.testsubject.Position({ x : 166, y : 88});
+	this.testsubject.Size({ width : 75, height : 75});
+	this.testsubject.Show();
+}
+unittests.TileTest.prototype.__class__ = unittests.TileTest;
+main.PaymentForm = function(item) {
+	if( item === $_ ) return;
+	main.Form.call(this,item);
+	this.id = "InGidio-PaymentForm-" + Math.floor(Math.random() * 50000) + "-";
+	this.ids = [];
+	this.GenerateForm();
+	this.HTML(this.form);
+	this.Size({ width : 200, height : 325});
+	this.Confirm((function(item1,pay) {
+		return function(e) {
+			if(pay.Validate()) {
+				var confirmation = new main.ConfirmationForm(item1);
+				confirmation.Position(pay.Position());
+				confirmation.PaymentInfo(pay.Get());
+				pay.Remove();
+			}
+		};
+	})(item,this));
+}
+main.PaymentForm.__name__ = ["main","PaymentForm"];
+main.PaymentForm.__super__ = main.Form;
+for(var k in main.Form.prototype ) main.PaymentForm.prototype[k] = main.Form.prototype[k];
+main.PaymentForm.prototype.ids = null;
+main.PaymentForm.prototype.id = null;
+main.PaymentForm.prototype.Get = function() {
+	var pay = { name : new js.JQuery("#" + this.id + this.ids[0]).val(), creditcard : new js.JQuery("#" + this.id + this.ids[1]).val(), ccv : new js.JQuery("#" + this.id + this.ids[2]).val(), month : new js.JQuery("#" + this.id + this.ids[3]).val(), year : new js.JQuery("#" + this.id + this.ids[4]).val(), email : new js.JQuery("#" + this.id + this.ids[5]).val()};
+	return pay;
+}
+main.PaymentForm.prototype.Validate = function() {
+	var flag = true;
+	var rcc;
+	var res;
+	var jq;
+	rcc = new EReg("\\S+","");
+	jq = new js.JQuery("#" + this.id + this.ids[0]);
+	res = rcc.match(jq.val());
+	if(!res) {
+		jq.css("border","2px solid red");
+		flag = false;
+	}
+	rcc = new EReg("^[0-9]{4}(\\s|-){0,}[0-9]{4}(\\s|-){0,}[0-9]{4}(\\s|-){0,}[0-9]{4}(\\s|-){0,}$","");
+	jq = new js.JQuery("#" + this.id + this.ids[1]);
+	res = rcc.match(jq.val());
+	if(!res) {
+		jq.css("border","2px solid red");
+		flag = false;
+	}
+	rcc = new EReg("^[0-9]{3,4}$","");
+	jq = new js.JQuery("#" + this.id + this.ids[2]);
+	res = rcc.match(jq.val());
+	if(!res) {
+		jq.css("border","2px solid red");
+		flag = false;
+	}
+	rcc = new EReg("^((0?[0-9]{1})|(1[0,2]{1}))$","");
+	jq = new js.JQuery("#" + this.id + this.ids[3]);
+	res = rcc.match(jq.val());
+	if(!res) {
+		jq.css("border","2px solid red");
+		flag = false;
+	}
+	rcc = new EReg("^[1,9]{1}[0,9]{1}$","");
+	jq = new js.JQuery("#" + this.id + this.ids[4]);
+	res = rcc.match(jq.val());
+	if(!res) {
+		jq.css("border","2px solid red");
+		flag = false;
+	}
+	rcc = new EReg("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$","");
+	jq = new js.JQuery("#" + this.id + this.ids[5]);
+	res = rcc.match(jq.val());
+	if(!res) {
+		jq.css("border","2px solid red");
+		flag = false;
+	}
+	return flag;
+}
+main.PaymentForm.prototype.GenerateForm = function() {
+	var output = "<ul style='list-style-type: none; display: inline;'><li>";
+	output += "<div id='" + this.id + "title'>Checkout</div>";
+	output += "</li><li>";
+	output += "<div id='" + this.id + "name-label'>Name: </div>";
+	output += "<input type='text' id='" + this.id + "name' placeholder='Adam Smith'/>";
+	output += "</li><li>";
+	this.ids.push("name");
+	output += "<div id='" + this.id + "credit-card-label'>Credit Card Number: </div>";
+	output += "<input type='text' id='" + this.id + "credit-card' placeholder='4231 4585 4874 5150'/>";
+	output += "</li><li>";
+	this.ids.push("credit-card");
+	output += "<div id='" + this.id + "ccv-label'>CCV: </div>";
+	output += "<input type='text' id='" + this.id + "ccv' placeholder='112' style='width: 3em;' size='30'/>";
+	output += "</li><li>";
+	this.ids.push("ccv");
+	output += "<div id='" + this.id + "month-label'>Expiration: </div>";
+	output += "<input type='text' id='" + this.id + "month' placeholder='3' style='width: 2em;' size='30' />";
+	this.ids.push("month");
+	output += "/20";
+	output += "<input type='text' id='" + this.id + "year' placeholder='15' style='width: 2em;' size='30' />";
+	output += "</li><li>";
+	this.ids.push("year");
+	output += "<div id='" + this.id + "email-label'>Email: </div>";
+	output += "<input type='text' id='" + this.id + "email' placeholder='invisible@hand.com'/>";
+	output += "</li></ul>";
+	this.ids.push("email");
+	this.form = output;
+	return output;
+}
+main.PaymentForm.prototype.__class__ = main.PaymentForm;
+EReg = function(r,opt) {
+	if( r === $_ ) return;
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+}
+EReg.__name__ = ["EReg"];
+EReg.prototype.r = null;
+EReg.prototype.match = function(s) {
+	this.r.m = this.r.exec(s);
+	this.r.s = s;
+	this.r.l = RegExp.leftContext;
+	this.r.r = RegExp.rightContext;
+	return this.r.m != null;
+}
+EReg.prototype.matched = function(n) {
+	return this.r.m != null && n >= 0 && n < this.r.m.length?this.r.m[n]:(function($this) {
+		var $r;
+		throw "EReg::matched";
+		return $r;
+	}(this));
+}
+EReg.prototype.matchedLeft = function() {
+	if(this.r.m == null) throw "No string matched";
+	if(this.r.l == null) return this.r.s.substr(0,this.r.m.index);
+	return this.r.l;
+}
+EReg.prototype.matchedRight = function() {
+	if(this.r.m == null) throw "No string matched";
+	if(this.r.r == null) {
+		var sz = this.r.m.index + this.r.m[0].length;
+		return this.r.s.substr(sz,this.r.s.length - sz);
+	}
+	return this.r.r;
+}
+EReg.prototype.matchedPos = function() {
+	if(this.r.m == null) throw "No string matched";
+	return { pos : this.r.m.index, len : this.r.m[0].length};
+}
+EReg.prototype.split = function(s) {
+	var d = "#__delim__#";
+	return s.replace(this.r,d).split(d);
+}
+EReg.prototype.replace = function(s,by) {
+	return s.replace(this.r,by);
+}
+EReg.prototype.customReplace = function(s,f) {
+	var buf = new StringBuf();
+	while(true) {
+		if(!this.match(s)) break;
+		buf.add(this.matchedLeft());
+		buf.add(f(this));
+		s = this.matchedRight();
+	}
+	buf.b[buf.b.length] = s == null?"null":s;
+	return buf.b.join("");
+}
+EReg.prototype.__class__ = EReg;
+unittests.FormTest = function(p) {
+	if( p === $_ ) return;
+	unittests.UnitTest.call(this);
+	this.testsubject = new main.PaymentForm(unittests.FormTest.ITEM);
+}
+unittests.FormTest.__name__ = ["unittests","FormTest"];
+unittests.FormTest.__super__ = unittests.UnitTest;
+for(var k in unittests.UnitTest.prototype ) unittests.FormTest.prototype[k] = unittests.UnitTest.prototype[k];
+unittests.FormTest.prototype.testsubject = null;
+unittests.FormTest.prototype.IntegrationTest = function() {
+	this.testsubject.Position({ x : 256, y : 256});
+	this.testsubject.Show();
+}
+unittests.FormTest.prototype.__class__ = unittests.FormTest;
+StringBuf = function(p) {
+	if( p === $_ ) return;
+	this.b = new Array();
+}
+StringBuf.__name__ = ["StringBuf"];
+StringBuf.prototype.add = function(x) {
+	this.b[this.b.length] = x == null?"null":x;
+}
+StringBuf.prototype.addSub = function(s,pos,len) {
+	this.b[this.b.length] = s.substr(pos,len);
+}
+StringBuf.prototype.addChar = function(c) {
+	this.b[this.b.length] = String.fromCharCode(c);
+}
+StringBuf.prototype.toString = function() {
+	return this.b.join("");
+}
+StringBuf.prototype.b = null;
+StringBuf.prototype.__class__ = StringBuf;
+main.Tile = function(p) {
+	if( p === $_ ) return;
+	this.clicks = [];
+	this.mouseovers = [];
+	this.mouseleaves = [];
+	main.Element.call(this);
+	this.CSS("z-index","968");
+}
+main.Tile.__name__ = ["main","Tile"];
+main.Tile.__super__ = main.Element;
+for(var k in main.Element.prototype ) main.Tile.prototype[k] = main.Element.prototype[k];
+main.Tile.prototype.image = null;
+main.Tile.prototype.clicks = null;
+main.Tile.prototype.mouseovers = null;
+main.Tile.prototype.mouseleaves = null;
+main.Tile.prototype.SetAnimation = function(image) {
+	if(image == null) return this.image;
+	this.image = image;
+	this.CSS("background-image","url('" + image + "')");
+	return this.image;
+}
+main.Tile.prototype.Click = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.clicks.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.clicks[k](null);
+		}
+	} else {
+		this.clicks.push(cb);
+		this.domContainer.click(cb);
+	}
+}
+main.Tile.prototype.Mouseover = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.mouseovers.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.mouseovers[k](null);
+		}
+	} else {
+		this.mouseovers.push(cb);
+		this.domContainer.mouseover(cb);
+	}
+}
+main.Tile.prototype.Mouseleave = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.mouseleaves.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.mouseleaves[k](null);
+		}
+	} else {
+		this.mouseleaves.push(cb);
+		this.domContainer.mouseleave(cb);
+	}
+}
+main.Tile.prototype.__class__ = main.Tile;
 IntIter = function(min,max) {
 	if( min === $_ ) return;
 	this.min = min;
@@ -354,6 +685,18 @@ $_ = {}
 js.Boot.__res = {}
 js.Boot.__init();
 {
+	Math.__name__ = ["Math"];
+	Math.NaN = Number["NaN"];
+	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
+	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
+	Math.isFinite = function(i) {
+		return isFinite(i);
+	};
+	Math.isNaN = function(i) {
+		return isNaN(i);
+	};
+}
+{
 	js.Lib.document = document;
 	js.Lib.window = window;
 	onerror = function(msg,url,line) {
@@ -362,6 +705,50 @@ js.Boot.__init();
 			return false;
 		return f(msg,[url+":"+line]);
 	}
+}
+{
+	var d = Date;
+	d.now = function() {
+		return new Date();
+	};
+	d.fromTime = function(t) {
+		var d1 = new Date();
+		d1["setTime"](t);
+		return d1;
+	};
+	d.fromString = function(s) {
+		switch(s.length) {
+		case 8:
+			var k = s.split(":");
+			var d1 = new Date();
+			d1["setTime"](0);
+			d1["setUTCHours"](k[0]);
+			d1["setUTCMinutes"](k[1]);
+			d1["setUTCSeconds"](k[2]);
+			return d1;
+		case 10:
+			var k = s.split("-");
+			return new Date(k[0],k[1] - 1,k[2],0,0,0);
+		case 19:
+			var k = s.split(" ");
+			var y = k[0].split("-");
+			var t = k[1].split(":");
+			return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+		default:
+			throw "Invalid date format : " + s;
+		}
+	};
+	d.prototype["toString"] = function() {
+		var date = this;
+		var m = date.getMonth() + 1;
+		var d1 = date.getDate();
+		var h = date.getHours();
+		var mi = date.getMinutes();
+		var s = date.getSeconds();
+		return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d1 < 10?"0" + d1:"" + d1) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+	};
+	d.prototype.__class__ = d;
+	d.__name__ = ["Date"];
 }
 {
 	/*!
@@ -409,19 +796,12 @@ js.Boot.__init();
 	Enum = { };
 	Void = { __ename__ : ["Void"]};
 }
-{
-	Math.__name__ = ["Math"];
-	Math.NaN = Number["NaN"];
-	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
-	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
-	Math.isFinite = function(i) {
-		return isFinite(i);
-	};
-	Math.isNaN = function(i) {
-		return isNaN(i);
-	};
-}
+main.Element.ID = 0;
+main.Element.NAME = "InGidio-Tile-Element-" + Math.floor(10000 * Math.random());
 js.Lib.onerror = null;
-main.Blob.id = 0;
-main.Blob.tagname = "inGidio-blobform-" + Math.round(Math.random() * 1000);
-unittests.Blob_test.main()
+main.Form.IMAGES = { yes : SHOP_IMAGE_APPROVE, no : SHOP_IMAGE_CANCEL};
+main.Form.FORMS = [];
+unittests.UnitTest.UnitTests = [];
+unittests.TileTest.IMAGE = "madotsuki.png";
+unittests.FormTest.ITEM = { description : "Fucking niggers", tileset : "madotsuki.png", id : 15, price : 16.0, company_id : 66, title : "Madotsuki", created_at : Date.now(), updated_at : Date.now()};
+unittests.UnitTest.main()

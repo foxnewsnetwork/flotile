@@ -7,6 +7,9 @@
 // prior existing javascript code (to prevent 
 // crap-tons of reinventing the world)
 
+var SHOP_IMAGE_APPROVE = "madotsuki.png",  
+SHOP_IMAGE_CANCEL = "madotsuki.png";
+
 var SPECS_PAYMENTFORM = [
 	{
 		'tag' : 'div',
@@ -73,10 +76,7 @@ var SPECS_PAYMENTFORM = [
 		'placeholder' : 'ex. example@ex.com'
 	}
 ];
-if( InGidio == undefined ) { 
-	InGidio = {};
-} // end if
-
+/*
 var NormalShop = function(){ 
 	var shop = new main.Shop();
 	
@@ -86,3 +86,4 @@ var NormalShop = function(){
 		} // end Stock
 	}; // end return;
 }(); // end NormalShop
+*/
