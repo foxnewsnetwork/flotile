@@ -14,6 +14,7 @@ class Tile extends Element, implements Statistics{
 		this.clicks = [];
 		this.mouseovers = [];
 		this.mouseleaves = [];
+		
 		super();
 		this.CSS("z-index", "968");
 	} // end new

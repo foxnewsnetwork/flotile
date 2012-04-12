@@ -40,16 +40,16 @@ class ShopTest extends UnitTest{
 		for( k in 0...tiles.length){ 
 			tiles[k].Position({ x : k * 100, y : 10 });
 			tiles[k].Size({width : 75, height : 75});
+			tiles[k].Hide((function(el : Element, tile : ItemTile){
+				return function(){ 
+					el.HTML(untyped JSON.stringify(tile.ClearStats()));
+				}; // end return
+			})(el, tiles[k])); //end Hide
 			tiles[k].Buy((function(el : Element, tile : ItemTile){
 				return function(pay : PaymentInfo){ 
 					el.HTML(untyped JSON.stringify(pay));
 				}; // end return
 			})(el, tiles[k])); // end Buy
-			tiles[k].Click((function(el : Element, tile : ItemTile){ 
-				return function(e : JqEvent){ 
-					el.HTML( untyped JSON.stringify( tile.ClearStats() ) );
-				}; //end return
-			})(el, tiles[k])); //end Click
 		} //end length
 		
 		

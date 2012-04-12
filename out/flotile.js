@@ -2,6 +2,8 @@ $estr = function() { return js.Boot.__string_rec(this,''); }
 if(typeof main=='undefined') main = {}
 main.Element = function(p) {
 	if( p === $_ ) return;
+	this.hides = [];
+	this.shows = [];
 	this.position = { x : 0, y : 0};
 	this.size = { width : 75, height : 75};
 	var domBody = new js.JQuery("body");
@@ -15,6 +17,8 @@ main.Element.__name__ = ["main","Element"];
 main.Element.prototype.domContainer = null;
 main.Element.prototype.position = null;
 main.Element.prototype.size = null;
+main.Element.prototype.hides = null;
+main.Element.prototype.shows = null;
 main.Element.prototype.Position = function(pos) {
 	if(pos == null) return this.position;
 	this.position = pos;
@@ -33,11 +37,27 @@ main.Element.prototype.Size = function(siz) {
 main.Element.prototype.Remove = function() {
 	this.domContainer.remove();
 }
-main.Element.prototype.Hide = function() {
-	this.domContainer.hide();
+main.Element.prototype.Hide = function(cb) {
+	if(cb == null) this.domContainer.hide(500,(function(element) {
+		return function() {
+			var _g1 = 0, _g = element.hides.length;
+			while(_g1 < _g) {
+				var k = _g1++;
+				element.hides[k]();
+			}
+		};
+	})(this)); else this.hides.push(cb);
 }
-main.Element.prototype.Show = function() {
-	this.domContainer.show();
+main.Element.prototype.Show = function(cb) {
+	if(cb == null) this.domContainer.show(250,(function(element) {
+		return function() {
+			var _g1 = 0, _g = element.shows.length;
+			while(_g1 < _g) {
+				var k = _g1++;
+				element.shows[k]();
+			}
+		};
+	})(this)); else this.shows.push(cb);
 }
 main.Element.prototype.CSS = function(prop,value) {
 	this.domContainer.css(prop,value);
@@ -159,15 +179,23 @@ main.Shop.prototype.Stock = function(items) {
 		tile.CSS("border-radius","5px");
 		tile.CSS("-moz-border-radius","5px");
 		tile.CSS("border","1px solid black");
-		tile.Click(function(e) {
-			main.Form.RemoveAll();
-			var payment = new main.PaymentForm(tile);
-			payment.Position(tile.Position());
-		});
-		tile.Mouseover(function(e) {
-			var text = "<p>Title: " + item.title + "</p><p>Description: " + item.description + "</p><p>Price: $" + item.price + "</p>";
-			main.Tooltip.show(text);
-		});
+		tile.Click((function(tile1) {
+			return function(e) {
+				main.Form.RemoveAll();
+				var payment = new main.PaymentForm(tile1);
+				var posx = tile1.Position().x - Math.floor(payment.Size().width / 2);
+				var posy = tile1.Position().y - Math.floor(payment.Size().height / 2);
+				posx = posx > 5?posx:5;
+				posy = posy > 5?posy:5;
+				payment.Position({ x : posx, y : posy});
+			};
+		})(tile));
+		tile.Mouseover((function(item1) {
+			return function(e) {
+				var text = "<p>Title: " + item1.title + "</p><p>Description: " + item1.description + "</p><p>Price: $" + item1.price + "</p>";
+				main.Tooltip.show(text);
+			};
+		})(item));
 		tile.Mouseleave(function(e) {
 			main.Tooltip.hide();
 		});

@@ -7,8 +7,12 @@ class Element {
 	private var domContainer : JQuery;
 	private var position : { x : Int, y : Int };
 	private var size : { width : Int, height : Int };
+	private var hides : Array<Void -> Void>;
+	private var shows : Array<Void -> Void>;
 	
-	public function new(){ 
+	public function new(){
+		this.hides = [];
+		this.shows = []; 
 		this.position = { x : 0, y : 0 };
 		this.size = { width : 75, height : 75 };
 		var domBody = new JQuery( "body" );
@@ -44,12 +48,34 @@ class Element {
 		this.domContainer.remove();
 	}// end remove
 	
-	public function Hide() : Void{ 
-		this.domContainer.hide();
+	public function Hide(?cb : Void -> Void) : Void{ 
+		if(cb == null){ 
+			this.domContainer.hide(500, (function(element : Element){
+				return function(){
+					for(k in 0...element.hides.length){
+						element.hides[k]();
+					} //end for
+				}; // end return
+			})(this)); // end hide
+		} //end if
+		else{
+			this.hides.push(cb);
+		} // end else
 	} //end Hide
 	
-	public function Show() : Void{ 
-		this.domContainer.show();
+	public function Show(?cb : Void -> Void) : Void{ 
+		if(cb == null){ 
+			this.domContainer.show(250,(function(element : Element){
+				return function(){
+					for(k in 0...element.shows.length){
+						element.shows[k]();
+					} //end for
+				}; // end return
+			})(this)); // end show
+		} //end if
+		else{
+			this.shows.push(cb);
+		} // end else
 	} //end show
 	
 	public function CSS( prop : String, value : String ) : Void{ 
