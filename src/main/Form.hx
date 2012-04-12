@@ -7,7 +7,6 @@ class Form extends Element{
 	private var form : String;
 	private var yes : Tile;
 	private var no : Tile;
-	private var item : Item;
 	
 	public static function RemoveAll() : Void{ 
 		for( k in 0...Form.FORMS.length ){ 
@@ -37,15 +36,18 @@ class Form extends Element{
 			this.Remove();
 		} //end if
 	} // end Cancel
-	public function new(it : Item){ 
+	public function new(){ 
 		super();
-		this.item = it;
 		this.yes = new Tile();
 		this.no = new Tile();
+		this.CSS("z-index", "969");
+		this.CSS("background-color", "rgb(250,245,255)");
 		this.CSS("border-radius", "10px");
 		this.CSS("-moz-border-radius", "10px");
 		this.CSS("border", "2px solid red");
 		this.CSS("padding-left", "0.5em");
+		this.yes.CSS("z-index", "970");
+		this.no.CSS("z-index", "970");
 		this.yes.CSS("border", "2px solid black");
 		this.no.CSS("border", "2px solid black");
 		this.yes.CSS("border-radius", "10px");

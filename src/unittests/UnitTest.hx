@@ -12,7 +12,8 @@ class UnitTest {
 	public static function main(){ 
 		// TODO: initialize additional tests in here
 		var tiletest = new TileTest();
-		var formteset = new FormTest();
+		
+		var shoptest = new ShopTest();
 		
 		for( k in 0...UnitTest.UnitTests.length ){ 
 			UnitTest.UnitTests[k].IntegrationTest();
