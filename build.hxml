@@ -2,13 +2,13 @@
 
 # Uncomment the desirable target
 # JavaScript target
-#-js out/flotile.js
-#-main main.Shop
+-js out/flotile.js
+-main main.Shop
 
 # Uncomment to build the test files
 # Javascript target
--js out/flotile_test.js
--main unittests.UnitTest
+#-js out/flotile_test.js
+#-main unittests.UnitTest
 
 # SWF 9 target
 # -swf9 out/flotile.swf
