@@ -72,7 +72,7 @@ class PaymentForm extends ItemForm {
 		} // end if
 		
 		// Step 3: validate month
-		rcc = ~/^((0?[0-9]{1})|(1[0,2]{1}))$/;
+		rcc = ~/^((0?[0-9]{1})|(1[0-2]{1}))$/;
 		jq = new JQuery("#" + this.id + this.ids[3]);
 		jq.css("border", "none");
 		res = rcc.match(jq.val());

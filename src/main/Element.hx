@@ -45,6 +45,7 @@ class Element {
 	} // end Size
 	
 	public function Remove() : Void{
+		this.Hide();
 		this.domContainer.remove();
 	}// end remove
 	

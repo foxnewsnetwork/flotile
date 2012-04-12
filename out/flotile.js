@@ -35,6 +35,7 @@ main.Element.prototype.Size = function(siz) {
 	return this.size;
 }
 main.Element.prototype.Remove = function() {
+	this.Hide();
 	this.domContainer.remove();
 }
 main.Element.prototype.Hide = function(cb) {
@@ -713,7 +714,7 @@ main.PaymentForm.prototype.Validate = function() {
 		jq.css("border","2px solid red");
 		flag = false;
 	}
-	rcc = new EReg("^((0?[0-9]{1})|(1[0,2]{1}))$","");
+	rcc = new EReg("^((0?[0-9]{1})|(1[0-2]{1}))$","");
 	jq = new js.JQuery("#" + this.id + this.ids[3]);
 	jq.css("border","none");
 	res = rcc.match(jq.val());
