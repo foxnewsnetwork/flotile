@@ -6,32 +6,61 @@ main.Element = function(p) {
 	this.shows = [];
 	this.position = { x : 0, y : 0};
 	this.size = { width : 75, height : 75};
-	var domBody = new js.JQuery("body");
-	domBody.append("<div id='" + main.Element.NAME + "-" + main.Element.ID + "'></div>");
+	this.domBody = new js.JQuery("body");
+	this.parent = this.domBody;
+	this.domBody.append("<div id='" + main.Element.NAME + "-" + main.Element.ID + "'></div>");
 	this.domContainer = new js.JQuery("#" + main.Element.NAME + "-" + main.Element.ID);
 	main.Element.ID += 1;
 	this.CSS("z-index","967");
 	this.CSS("position","absolute");
+	js.Lib.window.onresize = (function(el) {
+		return function(e) {
+			el.Track();
+		};
+	})(this);
 }
 main.Element.__name__ = ["main","Element"];
 main.Element.prototype.domContainer = null;
+main.Element.prototype.domBody = null;
 main.Element.prototype.position = null;
 main.Element.prototype.size = null;
 main.Element.prototype.hides = null;
 main.Element.prototype.shows = null;
+main.Element.prototype.parent = null;
+main.Element.prototype.timer = null;
+main.Element.prototype.Track = function() {
+	if(this.parent.length < 1) {
+		this.Remove();
+		return;
+	}
+	if(this.parent.attr("visibility") == "hidden") this.Hide();
+	this.Position(this.position);
+	var scale = this.parent.attr("-moz-transform");
+	if(scale != "") this.CSS("-moz-transform",scale);
+}
+main.Element.prototype.Parent = function(parent) {
+	if(parent == null) return this.parent; else {
+		if(this.parent.length == 0) this.parent = this.domBody;
+		return this.parent;
+	}
+}
 main.Element.prototype.Position = function(pos) {
+	main.Element.TestCounter++;
 	if(pos == null) return this.position;
 	this.position = pos;
-	this.domContainer.css("left",this.position.x + "px");
-	this.domContainer.css("top",this.position.y + "px");
+	var offset = { top : this.parent.innerHeight(), left : this.parent.innerWidth()};
+	var x = this.position.x;
+	var y = this.position.y;
+	this.domContainer.css("left",x + "%");
+	this.domContainer.css("top",y + "%");
 	return this.position;
 }
 main.Element.prototype.Size = function(siz) {
 	if(siz == null) return this.size;
 	this.size = siz;
-	this.domContainer.css("width",this.size.width + "px");
-	this.domContainer.css("height",this.size.height + "px");
-	this.domContainer.css("background-size",this.size.width + "px " + this.size.height + "px");
+	this.domContainer.css("width",this.size.width + "%");
+	this.domContainer.css("height",this.size.height + "%");
+	this.domContainer.css("background-size","100% 100%");
 	return this.size;
 }
 main.Element.prototype.Remove = function() {
@@ -65,6 +94,7 @@ main.Element.prototype.CSS = function(prop,value) {
 }
 main.Element.prototype.HTML = function(html) {
 	if(html == null) return this.domContainer.html();
+	this.domContainer.removeData();
 	this.domContainer.append(html);
 	return html;
 }
@@ -969,6 +999,7 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 }
 main.Element.ID = 0;
 main.Element.NAME = "InGidio-Tile-Element-" + Math.floor(10000 * Math.random());
+main.Element.TestCounter = 0;
 main.Form.IMAGES = { yes : SHOP_IMAGE_APPROVE, no : SHOP_IMAGE_CANCEL};
 main.Form.FORMS = [];
 tools.Timer.TIME = haxe.Timer.stamp();

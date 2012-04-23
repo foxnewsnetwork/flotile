@@ -11,9 +11,9 @@ class UnitTest {
 	} // end IntegrationTest
 	public static function main(){ 
 		// TODO: initialize additional tests in here
-		var tiletest = new TileTest();
+		var vntest = new VisualNovelTest();
 		
-		var shoptest = new ShopTest();
+		// var shoptest = new ShopTest();
 		
 		for( k in 0...UnitTest.UnitTests.length ){ 
 			UnitTest.UnitTests[k].IntegrationTest();
