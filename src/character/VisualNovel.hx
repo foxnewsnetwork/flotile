@@ -67,7 +67,13 @@ class VisualNovel extends Tile {
 	} //end hide
 	
 	public function Next(?cb : JqEvent -> Void) : Void {
-		this.ui_next.Click(cb);
+		if( cb == null ){ 
+			this.ui_next.Click();
+		} // end if
+		else{
+			this.dialogue.Click(cb);
+			this.ui_next.Click(cb);
+		} // end else
 	} //end Next
 	
 	public function Background(){ 
