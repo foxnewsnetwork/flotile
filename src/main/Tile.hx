@@ -30,6 +30,9 @@ class Tile extends Element, implements Statistics{
 		if( image == null ){ 
 			return this.image;
 		} // end if
+		else if( this.image == image ){ 
+			return this.image;
+		} // end else
 		this.image = image; 
 		this.CSS("background-image", "url('" + image + "')" );
 		return this.image;

@@ -34,7 +34,7 @@ class DialogueBox extends Tile {
 		this.CSS( "top" , "60%" );
 		this.CSS( "border", "2px solid black" );
 		this.CSS( "background-color" , "rgb(200,198,225)" );
-		this.CSS( "opacity" , "0.65" );
+		this.CSS( "opacity" , "0.85" );
 		this.CSS( "border-radius" ,"1em" );
 		this.CSS( "-moz-border-radius" , "1em" );
 		this.CSS( "padding" , "1em" );
@@ -46,18 +46,18 @@ class DialogueBox extends Tile {
 		this.speaker.Position( { x : 10, y : 52 } );
 		this.speaker.CSS( "border", "2px solid black" );
 		this.speaker.CSS( "background-color" , "rgb(200,198,225)" );
-		this.speaker.CSS( "opacity" , "0.65" );
+		this.speaker.CSS( "opacity" , "0.85" );
 		this.speaker.CSS( "border-radius" ,"1em" );
 		this.speaker.CSS( "-moz-border-radius" , "1em" );
 		this.speaker.CSS( "padding" , "0.7em" );
 		this.speaker.CSS("z-index", "950");
 		this.speaker.CSS("text-align", "center");
-		this.speaker.CSS("font-size", "1.5em");
+		this.speaker.CSS("font-size", "1.75em");
 		
 	} // end new
 	public function Chat(chat : String, ?speaker : String) : Void{ 
 		this.chats.push(chat);
-		this.HTML("<p id=\"visual-novel-dialogue\">"+ chat +"</p>");
+		this.HTML("<p></p><p id=\"visual-novel-dialogue\">"+ chat +"</p>");
 		if( speaker != null ){ 
 			this.speaker.HTML(speaker);
 		} //end if

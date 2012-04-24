@@ -46,6 +46,7 @@ class VisualNovel extends Tile {
 	public override function Hide(?cb : Void -> Void) : Void{ 
 		super.Hide(cb);
 		if( cb == null ){
+			this.dialogue.Hide();
 			this.background.Hide();
 			for( k in 0...this.characters.length ){ 
 				this.characters[k].Hide();
@@ -80,12 +81,18 @@ class VisualNovel extends Tile {
 		return this.background;
 	} // end KillBackground 
 	
+	public function Transition() : Void { 
+		// TODO: write in actual animation 
+		this.Hide();
+		this.Show();
+	} // end transition
+	
 	public function PlayScene( scene : SceneData ){ 
 		// Step 1: Set background
 		if( scene.background != null ){ 
 			if( scene.background.image != null ){
 				this.background.SetAnimation(scene.background.image);
-				this.background.CSS("z-index", "850");
+				this.background.CSS("z-index", "850");			
 			} // end if
 		} //end if
 		else { 
