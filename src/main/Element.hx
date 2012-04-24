@@ -145,8 +145,8 @@ class Element {
 		if( html == null ){ 
 			return this.domContainer.html();
 		}//end if
-		this.domContainer.removeData();
-		this.domContainer.append(html);
+		this.domContainer.html(html);
 		return html;
+		
 	} // end HTML
 }

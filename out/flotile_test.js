@@ -182,6 +182,15 @@ js.Boot.__init = function() {
 }
 js.Boot.prototype.__class__ = js.Boot;
 if(typeof main=='undefined') main = {}
+main.Tooltip = function() { }
+main.Tooltip.__name__ = ["main","Tooltip"];
+main.Tooltip.show = function(text) {
+	tooltip.show(text);
+}
+main.Tooltip.hide = function() {
+	tooltip.hide();
+}
+main.Tooltip.prototype.__class__ = main.Tooltip;
 main.Element = function(p) {
 	if( p === $_ ) return;
 	this.hides = [];
@@ -276,8 +285,7 @@ main.Element.prototype.CSS = function(prop,value) {
 }
 main.Element.prototype.HTML = function(html) {
 	if(html == null) return this.domContainer.html();
-	this.domContainer.removeData();
-	this.domContainer.append(html);
+	this.domContainer.html(html);
 	return html;
 }
 main.Element.prototype.__class__ = main.Element;
@@ -390,6 +398,23 @@ main.Tile.__interfaces__ = [main.Statistics];
 if(typeof character=='undefined') character = {}
 character.VisualNovel = function(p) {
 	if( p === $_ ) return;
+	this.ui_next = new main.Tile();
+	this.ui_next.CSS("background-color","rgb(200,198,225)");
+	this.ui_next.Mouseover(function(e) {
+		main.Tooltip.show("Next");
+	});
+	this.ui_next.Mouseleave(function(e) {
+		main.Tooltip.hide();
+	});
+	this.ui_next.CSS("z-index","998");
+	this.ui_next.CSS("opacity","0.65");
+	this.ui_next.CSS("border","2px solid black");
+	this.ui_next.CSS("border-radius","1em");
+	this.ui_next.CSS("-moz-border-radius","1em");
+	this.ui_next.Size({ width : 4, height : 4});
+	this.ui_next.Position({ x : 90, y : 55});
+	this.ui_next.CSS("text-align","center");
+	this.ui_next.HTML(">>>");
 	this.dialogue = new character.DialogueBox();
 	this.characters = [];
 	this.background = new character.BackgroundDisplay();
@@ -398,9 +423,51 @@ character.VisualNovel = function(p) {
 character.VisualNovel.__name__ = ["character","VisualNovel"];
 character.VisualNovel.__super__ = main.Tile;
 for(var k in main.Tile.prototype ) character.VisualNovel.prototype[k] = main.Tile.prototype[k];
+character.VisualNovel.main = function() {
+	var FUCKINGNIGGERS = "j23i2j";
+}
 character.VisualNovel.prototype.dialogue = null;
 character.VisualNovel.prototype.characters = null;
 character.VisualNovel.prototype.background = null;
+character.VisualNovel.prototype.ui_next = null;
+character.VisualNovel.prototype.Remove = function() {
+	main.Tile.prototype.Remove.call(this);
+	this.background.Remove();
+	this.ui_next.Remove();
+	var _g1 = 0, _g = this.characters.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		this.characters[k].Remove();
+	}
+}
+character.VisualNovel.prototype.Hide = function(cb) {
+	main.Tile.prototype.Hide.call(this,cb);
+	if(cb == null) {
+		this.background.Hide();
+		var _g1 = 0, _g = this.characters.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.characters[k].Hide();
+		}
+		this.ui_next.Hide();
+	}
+}
+character.VisualNovel.prototype.Show = function(cb) {
+	main.Tile.prototype.Show.call(this,cb);
+	if(cb == null) {
+		this.dialogue.Show();
+		this.background.Show();
+		var _g1 = 0, _g = this.characters.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.characters[k].Show();
+		}
+		this.ui_next.Show();
+	}
+}
+character.VisualNovel.prototype.Next = function(cb) {
+	this.ui_next.Click(cb);
+}
 character.VisualNovel.prototype.Background = function() {
 	return this.background;
 }
@@ -410,8 +477,13 @@ character.VisualNovel.prototype.PlayScene = function(scene) {
 			this.background.SetAnimation(scene.background.image);
 			this.background.CSS("z-index","850");
 		}
-	}
+	} else this.background.Hide();
 	if(scene.foreground != null) {
+		var _g1 = 0, _g = this.characters.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.characters[k].Remove();
+		}
 		this.characters = [];
 		if(scene.foreground.images != null) {
 			var _g1 = 0, _g = scene.foreground.images.length;
@@ -536,7 +608,6 @@ tools.Timer.prototype.__class__ = tools.Timer;
 character.BackgroundDisplay = function(p) {
 	if( p === $_ ) return;
 	main.Tile.call(this);
-	this.CSS("overflow","visible");
 	this.Size({ width : 100, height : 100});
 	this.Position({ x : 0, y : 0});
 }
@@ -577,9 +648,11 @@ character.DialogueBox = function(p) {
 	this.CSS("border-radius","1em");
 	this.CSS("-moz-border-radius","1em");
 	this.CSS("padding","1em");
+	this.CSS("padding-left","2em");
+	this.CSS("padding-right","2em");
 	this.CSS("z-index","950");
 	this.speaker.Size({ width : 15, height : 3});
-	this.speaker.Position({ x : 10, y : 53});
+	this.speaker.Position({ x : 10, y : 52});
 	this.speaker.CSS("border","2px solid black");
 	this.speaker.CSS("background-color","rgb(200,198,225)");
 	this.speaker.CSS("opacity","0.65");
@@ -588,15 +661,28 @@ character.DialogueBox = function(p) {
 	this.speaker.CSS("padding","0.7em");
 	this.speaker.CSS("z-index","950");
 	this.speaker.CSS("text-align","center");
+	this.speaker.CSS("font-size","1.5em");
 }
 character.DialogueBox.__name__ = ["character","DialogueBox"];
 character.DialogueBox.__super__ = main.Tile;
 for(var k in main.Tile.prototype ) character.DialogueBox.prototype[k] = main.Tile.prototype[k];
 character.DialogueBox.prototype.chats = null;
 character.DialogueBox.prototype.speaker = null;
+character.DialogueBox.prototype.Hide = function(cb) {
+	main.Tile.prototype.Hide.call(this,cb);
+	if(cb == null) this.speaker.Hide();
+}
+character.DialogueBox.prototype.Show = function(cb) {
+	main.Tile.prototype.Show.call(this,cb);
+	if(cb == null) this.speaker.Show();
+}
+character.DialogueBox.prototype.Remove = function() {
+	main.Tile.prototype.Remove.call(this);
+	this.speaker.Remove();
+}
 character.DialogueBox.prototype.Chat = function(chat,speaker) {
 	this.chats.push(chat);
-	this.HTML("<p>" + chat + "</p>");
+	this.HTML("<p id=\"visual-novel-dialogue\">" + chat + "</p>");
 	if(speaker != null) this.speaker.HTML(speaker);
 }
 character.DialogueBox.prototype.Purge = function() {
@@ -628,8 +714,14 @@ for(var k in unittests.UnitTest.prototype ) unittests.VisualNovelTest.prototype[
 unittests.VisualNovelTest.prototype.testsubject = null;
 unittests.VisualNovelTest.prototype.IntegrationTest = function() {
 	var sd = { background : { image : "madotsuki.png"}, foreground : { images : ["madotsuki.png","madotsuki.png"], positions : [{ x : 22, y : 20},{ x : 42, y : 20}], sizes : [{ width : 6, height : 8},{ width : 12, height : 16}]}, text : { speaker : "Madotsuki", content : "Hello World"}};
+	var sd2 = { background : { image : "madotsuki.png"}, foreground : { images : ["madotsuki.png","madotsuki.png"], positions : [{ x : 24, y : 50},{ x : 62, y : 20}], sizes : [{ width : 16, height : 18},{ width : 12, height : 16}]}, text : { speaker : "Madotsuki", content : "foobar"}};
 	this.testsubject.PlayScene(sd);
-	this.testsubject.Background().Hide();
+	this.testsubject.Show();
+	this.testsubject.Next((function(vn,scene) {
+		return function(e) {
+			vn.PlayScene(scene);
+		};
+	})(this.testsubject,sd2));
 }
 unittests.VisualNovelTest.prototype.__class__ = unittests.VisualNovelTest;
 $_ = {}
