@@ -4,6 +4,7 @@ import main.Tile;
 
 class DialogueBox extends Tile {
 	private var chats : Array<String>;
+	private var speakers : Array<String>;
 	private var speaker : Tile;
 	
 	public override function Hide( ?cb : Void -> Void ){ 
@@ -22,9 +23,18 @@ class DialogueBox extends Tile {
 		super.Remove();
 		this.speaker.Remove();
 	} // end show
+	public function Load( scenes : Array<SceneData> ){ 
+		this.chats = [];
+		this.speakers = [];
+		for( k in 0...scenes.length ) { 
+			this.chats.push( scenes[k].text.content );
+			this.speakers.push( scenes[k].text.speaker );
+		} // end for
+	} // end Load
 	public function new(){ 
 		super();
 		this.chats = [];
+		this.speakers = [];
 		this.speaker = new Tile();
 		// Modifying css
 		this.CSS( "width" , "80%");
@@ -55,12 +65,9 @@ class DialogueBox extends Tile {
 		this.speaker.CSS("font-size", "1.75em");
 		
 	} // end new
-	public function Chat(chat : String, ?speaker : String) : Void{ 
-		this.chats.push(chat);
-		this.HTML("<p></p><p id=\"visual-novel-dialogue\">"+ chat +"</p>");
-		if( speaker != null ){ 
-			this.speaker.HTML(speaker);
-		} //end if
+	public function Chat(num : Int) : Void{ 
+		this.HTML("<p></p><p id=\"visual-novel-dialogue\">"+ this.chats[num] +"</p>");
+		this.speaker.HTML(this.speakers[num]);
 	} // end Chat
 	public function Purge() : Void{
 		

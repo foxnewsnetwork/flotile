@@ -4,6 +4,7 @@ import main.Tooltip;
 import js.JQuery;
 
 class VisualNovel extends Tile {
+	private var dialogue : DialogueBox;
 	private var scenes : Array<SceneDisplay>;
 	private var count : Int;
 	private var ui : Array<Tile>;
@@ -12,6 +13,7 @@ class VisualNovel extends Tile {
 	
 	public function new(){ 
 		super();
+		this.dialogue = new DialogueBox();
 		this.ending = [];
 		this.scenes = [];
 		this.count = 0;
@@ -27,7 +29,7 @@ class VisualNovel extends Tile {
 			Tooltip.hide();
 		} ); // end Mouseleave
 		this.ui[0].CSS("z-index", "998");
-		this.ui[0].CSS( "opacity" , "0.65" );
+		this.ui[0].CSS( "opacity" , "0.75" );
 		this.ui[0].CSS("border","2px solid black");
 		this.ui[0].CSS("border-radius", "1em");
 		this.ui[0].CSS( "-moz-border-radius" , "1em" );
@@ -46,7 +48,7 @@ class VisualNovel extends Tile {
 			for( j in 0...this.ui.length ) { 
 				this.ui[j].Show();
 			} // end for
-			
+			this.dialogue.Show();
 		} // end else
 	} // end Show
 	
@@ -61,7 +63,7 @@ class VisualNovel extends Tile {
 			for( j in 0...this.ui.length ) { 
 				this.ui[j].Hide();
 			} // end for
-			
+			this.dialogue.Hide();
 		} // end else
 	} // end Hide
 	
@@ -69,6 +71,8 @@ class VisualNovel extends Tile {
 		this.KillScenes();
 		this.LoadingScreen(true);
 		this.scenes = [];
+		this.dialogue.Hide();
+		this.dialogue.Load(scenes);
 		for( k in 0...scenes.length ){ 
 			this.scenes.push( new SceneDisplay() );
 			this.scenes[k].Hide();
@@ -76,6 +80,7 @@ class VisualNovel extends Tile {
 		} // end for	
 		this.count = 0;
 		this.LoadingScreen(false);
+		this.dialogue.Show();
 	} // end Load
 	
 	public function Scene( ?num : Int ) : SceneDisplay { 
@@ -85,6 +90,7 @@ class VisualNovel extends Tile {
 		else { 
 			this.scenes[this.count].Hide();
 			this.count = num;
+			this.dialogue.Chat(num);
 			this.scenes[this.count].Show();
 			return this.scenes[this.count];
 		} // end else
@@ -104,6 +110,10 @@ class VisualNovel extends Tile {
 	
 	public override function Remove() : Void { 
 		this.KillScenes();
+		this.dialogue.Remove();
+		for( k in 0...this.ui.length ){ 
+			this.ui[k].Remove();
+		} // end for
 		super.Remove();
 	} // end Remove
 	
@@ -126,7 +136,8 @@ class VisualNovel extends Tile {
 			this.End();
 			return this.scenes[this.count];
 		} // end if
-		else {  
+		else {
+			this.dialogue.Chat(this.count);  
 			this.scenes[this.count].Show();
 			return this.scenes[this.count];
 		} // end else
@@ -136,6 +147,7 @@ class VisualNovel extends Tile {
 		this.scenes[this.count].Hide();
 		this.count--;
 		this.count = this.count < 0 ? 0 : this.count;
+		this.dialogue.Chat(this.count);
 		this.scenes[this.count].Show();
 		return this.scenes[this.count];
 	} // end Previous
@@ -149,13 +161,11 @@ class VisualNovel extends Tile {
 	
 	public override function Click( ?cb : JqEvent -> Void ) : Void { 
 		if( cb != null ) {
-			for( k in 0...this.scenes.length ) { 
-				this.scenes[k].Click(cb);
-			} // end for 
+			this.dialogue.Click(cb);
 			this.ui[0].Click(cb);
 		} // end if
 		else { 
-			super.Click(cb);
+			this.dialogue.Click(cb);
 		} // end else
 	} // end Click
 	

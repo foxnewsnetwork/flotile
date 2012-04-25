@@ -399,6 +399,7 @@ if(typeof character=='undefined') character = {}
 character.VisualNovel = function(p) {
 	if( p === $_ ) return;
 	main.Tile.call(this);
+	this.dialogue = new character.DialogueBox();
 	this.ending = [];
 	this.scenes = [];
 	this.count = 0;
@@ -414,7 +415,7 @@ character.VisualNovel = function(p) {
 		main.Tooltip.hide();
 	});
 	this.ui[0].CSS("z-index","998");
-	this.ui[0].CSS("opacity","0.65");
+	this.ui[0].CSS("opacity","0.75");
 	this.ui[0].CSS("border","2px solid black");
 	this.ui[0].CSS("border-radius","1em");
 	this.ui[0].CSS("-moz-border-radius","1em");
@@ -429,6 +430,7 @@ for(var k in main.Tile.prototype ) character.VisualNovel.prototype[k] = main.Til
 character.VisualNovel.main = function() {
 	var FUCKINGNIGGERS = "j23i2j";
 }
+character.VisualNovel.prototype.dialogue = null;
 character.VisualNovel.prototype.scenes = null;
 character.VisualNovel.prototype.count = null;
 character.VisualNovel.prototype.ui = null;
@@ -442,6 +444,7 @@ character.VisualNovel.prototype.Show = function(cb) {
 			var j = _g1++;
 			this.ui[j].Show();
 		}
+		this.dialogue.Show();
 	}
 }
 character.VisualNovel.prototype.Hide = function(cb) {
@@ -456,12 +459,15 @@ character.VisualNovel.prototype.Hide = function(cb) {
 			var j = _g1++;
 			this.ui[j].Hide();
 		}
+		this.dialogue.Hide();
 	}
 }
 character.VisualNovel.prototype.Load = function(scenes) {
 	this.KillScenes();
 	this.LoadingScreen(true);
 	this.scenes = [];
+	this.dialogue.Hide();
+	this.dialogue.Load(scenes);
 	var _g1 = 0, _g = scenes.length;
 	while(_g1 < _g) {
 		var k = _g1++;
@@ -471,11 +477,13 @@ character.VisualNovel.prototype.Load = function(scenes) {
 	}
 	this.count = 0;
 	this.LoadingScreen(false);
+	this.dialogue.Show();
 }
 character.VisualNovel.prototype.Scene = function(num) {
 	if(num == null) return this.scenes[this.count]; else {
 		this.scenes[this.count].Hide();
 		this.count = num;
+		this.dialogue.Chat(num);
 		this.scenes[this.count].Show();
 		return this.scenes[this.count];
 	}
@@ -488,6 +496,12 @@ character.VisualNovel.prototype.LoadingScreen = function(flag) {
 }
 character.VisualNovel.prototype.Remove = function() {
 	this.KillScenes();
+	this.dialogue.Remove();
+	var _g1 = 0, _g = this.ui.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		this.ui[k].Remove();
+	}
 	main.Tile.prototype.Remove.call(this);
 }
 character.VisualNovel.prototype.End = function(cb) {
@@ -507,6 +521,7 @@ character.VisualNovel.prototype.Next = function() {
 		this.End();
 		return this.scenes[this.count];
 	} else {
+		this.dialogue.Chat(this.count);
 		this.scenes[this.count].Show();
 		return this.scenes[this.count];
 	}
@@ -515,6 +530,7 @@ character.VisualNovel.prototype.Previous = function() {
 	this.scenes[this.count].Hide();
 	this.count--;
 	this.count = this.count < 0?0:this.count;
+	this.dialogue.Chat(this.count);
 	this.scenes[this.count].Show();
 	return this.scenes[this.count];
 }
@@ -528,13 +544,9 @@ character.VisualNovel.prototype.KillScenes = function() {
 }
 character.VisualNovel.prototype.Click = function(cb) {
 	if(cb != null) {
-		var _g1 = 0, _g = this.scenes.length;
-		while(_g1 < _g) {
-			var k = _g1++;
-			this.scenes[k].Click(cb);
-		}
+		this.dialogue.Click(cb);
 		this.ui[0].Click(cb);
-	} else main.Tile.prototype.Click.call(this,cb);
+	} else this.dialogue.Click(cb);
 }
 character.VisualNovel.prototype.__class__ = character.VisualNovel;
 if(typeof haxe=='undefined') haxe = {}
@@ -662,10 +674,13 @@ character.BackgroundDisplay = function(p) {
 character.BackgroundDisplay.__name__ = ["character","BackgroundDisplay"];
 character.BackgroundDisplay.__super__ = main.Tile;
 for(var k in main.Tile.prototype ) character.BackgroundDisplay.prototype[k] = main.Tile.prototype[k];
+character.BackgroundDisplay.prototype.Show = function(cb) {
+	if(this.image == null) return;
+	main.Tile.prototype.Show.call(this,cb);
+}
 character.BackgroundDisplay.prototype.__class__ = character.BackgroundDisplay;
 character.SceneDisplay = function(p) {
 	if( p === $_ ) return;
-	this.dialogue = new character.DialogueBox();
 	this.characters = [];
 	this.background = new character.BackgroundDisplay();
 	main.Tile.call(this);
@@ -673,7 +688,6 @@ character.SceneDisplay = function(p) {
 character.SceneDisplay.__name__ = ["character","SceneDisplay"];
 character.SceneDisplay.__super__ = main.Tile;
 for(var k in main.Tile.prototype ) character.SceneDisplay.prototype[k] = main.Tile.prototype[k];
-character.SceneDisplay.prototype.dialogue = null;
 character.SceneDisplay.prototype.characters = null;
 character.SceneDisplay.prototype.background = null;
 character.SceneDisplay.prototype.Remove = function() {
@@ -688,7 +702,6 @@ character.SceneDisplay.prototype.Remove = function() {
 character.SceneDisplay.prototype.Hide = function(cb) {
 	main.Tile.prototype.Hide.call(this,cb);
 	if(cb == null) {
-		this.dialogue.Hide();
 		this.background.Hide();
 		var _g1 = 0, _g = this.characters.length;
 		while(_g1 < _g) {
@@ -700,7 +713,6 @@ character.SceneDisplay.prototype.Hide = function(cb) {
 character.SceneDisplay.prototype.Show = function(cb) {
 	main.Tile.prototype.Show.call(this,cb);
 	if(cb == null) {
-		this.dialogue.Show();
 		this.background.Show();
 		var _g1 = 0, _g = this.characters.length;
 		while(_g1 < _g) {
@@ -710,7 +722,6 @@ character.SceneDisplay.prototype.Show = function(cb) {
 	}
 }
 character.SceneDisplay.prototype.Click = function(cb) {
-	this.dialogue.Click(cb);
 }
 character.SceneDisplay.prototype.Background = function() {
 	return this.background;
@@ -742,13 +753,8 @@ character.SceneDisplay.prototype.Load = function(scene) {
 				this.characters[k].Position(scene.foreground.positions[k]);
 				this.characters[k].Size(scene.foreground.sizes[k]);
 				this.characters[k].CSS("z-index",850 + k + "");
+				this.characters[k].Hide();
 			}
-		}
-	}
-	if(scene.text != null) {
-		if(scene.text.speaker != null) {
-			this.dialogue.Chat(scene.text.content,scene.text.speaker);
-			this.dialogue.CSS("z-index","950");
 		}
 	}
 }
@@ -757,6 +763,7 @@ character.DialogueBox = function(p) {
 	if( p === $_ ) return;
 	main.Tile.call(this);
 	this.chats = [];
+	this.speakers = [];
 	this.speaker = new main.Tile();
 	this.CSS("width","80%");
 	this.CSS("height","35%");
@@ -788,6 +795,7 @@ character.DialogueBox.__name__ = ["character","DialogueBox"];
 character.DialogueBox.__super__ = main.Tile;
 for(var k in main.Tile.prototype ) character.DialogueBox.prototype[k] = main.Tile.prototype[k];
 character.DialogueBox.prototype.chats = null;
+character.DialogueBox.prototype.speakers = null;
 character.DialogueBox.prototype.speaker = null;
 character.DialogueBox.prototype.Hide = function(cb) {
 	main.Tile.prototype.Hide.call(this,cb);
@@ -801,10 +809,19 @@ character.DialogueBox.prototype.Remove = function() {
 	main.Tile.prototype.Remove.call(this);
 	this.speaker.Remove();
 }
-character.DialogueBox.prototype.Chat = function(chat,speaker) {
-	this.chats.push(chat);
-	this.HTML("<p></p><p id=\"visual-novel-dialogue\">" + chat + "</p>");
-	if(speaker != null) this.speaker.HTML(speaker);
+character.DialogueBox.prototype.Load = function(scenes) {
+	this.chats = [];
+	this.speakers = [];
+	var _g1 = 0, _g = scenes.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		this.chats.push(scenes[k].text.content);
+		this.speakers.push(scenes[k].text.speaker);
+	}
+}
+character.DialogueBox.prototype.Chat = function(num) {
+	this.HTML("<p></p><p id=\"visual-novel-dialogue\">" + this.chats[num] + "</p>");
+	this.speaker.HTML(this.speakers[num]);
 }
 character.DialogueBox.prototype.Purge = function() {
 }

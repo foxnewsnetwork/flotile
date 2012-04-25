@@ -3,12 +3,10 @@ import main.Tile;
 import js.JQuery;
 
 class SceneDisplay extends Tile {
-	private var dialogue : DialogueBox;
 	private var characters : Array<CharacterDisplay>;
 	private var background : BackgroundDisplay;
 	
 	public function new(){ 
-		this.dialogue = new DialogueBox();
 		this.characters = [];
 		this.background = new BackgroundDisplay();
 		super();
@@ -25,7 +23,6 @@ class SceneDisplay extends Tile {
 	public override function Hide(?cb : Void -> Void) : Void{ 
 		super.Hide(cb);
 		if( cb == null ){
-			this.dialogue.Hide();
 			this.background.Hide();
 			for( k in 0...this.characters.length ){ 
 				this.characters[k].Hide();
@@ -36,7 +33,6 @@ class SceneDisplay extends Tile {
 	public override function Show(?cb : Void -> Void) : Void{ 
 		super.Show(cb);
 		if ( cb == null ) { 
-			this.dialogue.Show();
 			this.background.Show();
 			for( k in 0...this.characters.length ){ 
 				this.characters[k].Show();
@@ -45,7 +41,7 @@ class SceneDisplay extends Tile {
 	} //end hide
 	
 	public override function Click(?cb : JqEvent -> Void) : Void {
-		this.dialogue.Click( cb );
+		// TODO: implement me!
 	} //end Next
 	
 	public function Background(){ 
@@ -83,16 +79,9 @@ class SceneDisplay extends Tile {
 					this.characters[k].Position(scene.foreground.positions[k]);
 					this.characters[k].Size(scene.foreground.sizes[k]);
 					this.characters[k].CSS("z-index", (850 + k) + "");
+					this.characters[k].Hide();
 				} //end for
 			} //end if
 		} //end if
-		
-		// Step 3: Set text
-		if (scene.text != null) { 
-			if ( scene.text.speaker != null ) { 
-				this.dialogue.Chat(scene.text.content, scene.text.speaker);
-				this.dialogue.CSS("z-index", "950");
-			} //end if
-		} // end if
 	} // end load
 } // end SceneDisplay
