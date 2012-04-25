@@ -10,7 +10,7 @@ class VisualNovelTest extends UnitTest {
 		this.testsubject = new VisualNovel();
 	} // end new
 	override public function IntegrationTest() { 
-		var sd : SceneData = {
+		var sd1 : SceneData = {
 			background : { 
 				image : "madotsuki.png"
 			} , // end background
@@ -38,10 +38,14 @@ class VisualNovelTest extends UnitTest {
 				content : "foobar"
 			} // end text
 		}; //end SceneData
-		this.testsubject.PlayScene(sd);
-		this.testsubject.Show();
-		this.testsubject.Next( (function(vn : VisualNovel, scene : SceneData){
-			return function( e : JqEvent ){ vn.PlayScene(scene); };
-		})(this.testsubject, sd2) ); // end Next
+		this.testsubject.LoadingDisplay().SetAnimation("madotsuki.png");
+		this.testsubject.Load([sd1, sd2]);
+		this.testsubject.Scene(0);
+		this.testsubject.Click( (function(vn : VisualNovel){
+			return function( e : JqEvent ){ vn.Next(); };
+		})(this.testsubject) ); // end Next
+		this.testsubject.End( function(){ 
+			this.testsubject.Scene(0);
+		} );
 	} // end IntegrationTest
 } // end VisualNovelTest

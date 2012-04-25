@@ -4,128 +4,162 @@ import main.Tooltip;
 import js.JQuery;
 
 class VisualNovel extends Tile {
-	private var dialogue : DialogueBox;
-	private var characters : Array<CharacterDisplay>;
-	private var background : BackgroundDisplay;
-	private var ui_next : Tile;
+	private var scenes : Array<SceneDisplay>;
+	private var count : Int;
+	private var ui : Array<Tile>;
+	private var loading : LoadingDisplay;
+	private var ending : Array<Void -> Void>;
 	
 	public function new(){ 
-		this.ui_next = new Tile();
-		
-		this.ui_next.CSS("background-color" , "rgb(200,198,225)" );
-		this.ui_next.Mouseover( function(e : JqEvent){
+		super();
+		this.ending = [];
+		this.scenes = [];
+		this.count = 0;
+		this.ui = [];
+		this.ui.push(new Tile());
+		this.loading = new LoadingDisplay();
+		this.loading.HTML("<h1>Now Loading...</h1>");
+		this.ui[0].CSS("background-color" , "rgb(200,198,225)" );
+		this.ui[0].Mouseover( function(e : JqEvent){
 			Tooltip.show("Next");
 		} ); // end MouseOver
-		this.ui_next.Mouseleave( function(e : JqEvent){ 
+		this.ui[0].Mouseleave( function(e : JqEvent){ 
 			Tooltip.hide();
 		} ); // end Mouseleave
-		this.ui_next.CSS("z-index", "998");
-		this.ui_next.CSS( "opacity" , "0.65" );
-		this.ui_next.CSS("border","2px solid black");
-		this.ui_next.CSS("border-radius", "1em");
-		this.ui_next.CSS( "-moz-border-radius" , "1em" );
-		this.ui_next.Size({ width : 4, height : 4});
-		this.ui_next.Position({ x : 90, y : 55 });
-		this.ui_next.CSS("text-align", "center");
-		this.ui_next.HTML(">>>");
-		this.dialogue = new DialogueBox();
-		this.characters = [];
-		this.background = new BackgroundDisplay();
-		super();
+		this.ui[0].CSS("z-index", "998");
+		this.ui[0].CSS( "opacity" , "0.65" );
+		this.ui[0].CSS("border","2px solid black");
+		this.ui[0].CSS("border-radius", "1em");
+		this.ui[0].CSS( "-moz-border-radius" , "1em" );
+		this.ui[0].Size({ width : 4, height : 4});
+		this.ui[0].Position({ x : 90, y : 55 });
+		this.ui[0].CSS("text-align", "center");
+		this.ui[0].HTML(">>>");
 	} // end new
 	
-	public override function Remove() : Void{ 
-		super.Remove();
-		this.background.Remove();
-		this.ui_next.Remove();
-		for( k in 0...this.characters.length ){ 
-			this.characters[k].Remove();
-		} //end for
-	} //end remove
-	
-	public override function Hide(?cb : Void -> Void) : Void{ 
-		super.Hide(cb);
-		if( cb == null ){
-			this.dialogue.Hide();
-			this.background.Hide();
-			for( k in 0...this.characters.length ){ 
-				this.characters[k].Hide();
+	public override function Show(?cb : Void -> Void ) : Void { 
+		if( cb != null ) { 
+			super.Show(cb);
+		} // end if
+		else {
+			this.scenes[this.count].Show();
+			for( j in 0...this.ui.length ) { 
+				this.ui[j].Show();
 			} // end for
-			this.ui_next.Hide();
-		} // end if
-	} //end hide
-	
-	public override function Show(?cb : Void -> Void) : Void{ 
-		super.Show(cb);
-		if ( cb == null ) { 
-			this.dialogue.Show();
-			this.background.Show();
-			for( k in 0...this.characters.length ){ 
-				this.characters[k].Show();
-			} // end for
-			this.ui_next.Show();
-		} // end if
-	} //end hide
-	
-	public function Next(?cb : JqEvent -> Void) : Void {
-		if( cb == null ){ 
-			this.ui_next.Click();
-		} // end if
-		else{
-			this.dialogue.Click(cb);
-			this.ui_next.Click(cb);
+			
 		} // end else
-	} //end Next
+	} // end Show
 	
-	public function Background(){ 
-		return this.background;
-	} // end KillBackground 
-	
-	public function Transition() : Void { 
-		// TODO: write in actual animation 
-		this.Hide();
-		this.Show();
-	} // end transition
-	
-	public function PlayScene( scene : SceneData ){ 
-		// Step 1: Set background
-		if( scene.background != null ){ 
-			if( scene.background.image != null ){
-				this.background.SetAnimation(scene.background.image);
-				this.background.CSS("z-index", "850");			
-			} // end if
-		} //end if
-		else { 
-			this.background.Hide();
-		} //end else 
-		
-		// Step 2: Set foreground
-		if ( scene.foreground != null ){
-			for( k in 0...this.characters.length ){ 
-				this.characters[k].Remove();
-			} // ned for
-			this.characters = []; 
-			if ( scene.foreground.images != null ) { 
-				for( k in 0...scene.foreground.images.length ){ 
-					this.characters.push( new CharacterDisplay() );
-					this.characters[k].SetAnimation(scene.foreground.images[k]);
-					this.characters[k].Position(scene.foreground.positions[k]);
-					this.characters[k].Size(scene.foreground.sizes[k]);
-					this.characters[k].CSS("z-index", (850 + k) + "");
-				} //end for
-			} //end if
-		} //end if
-		
-		// Step 3: Set text
-		if (scene.text != null) { 
-			if ( scene.text.speaker != null ) { 
-				this.dialogue.Chat(scene.text.content, scene.text.speaker);
-				this.dialogue.CSS("z-index", "950");
-			} //end if
+	public override function Hide(?cb : Void -> Void ) : Void { 
+		if( cb != null ) { 
+			super.Hide(cb);
 		} // end if
-	} // end load
+		else {
+			for( k in 0...this.scenes.length ) { 
+				this.scenes[k].Hide();
+			} // end for
+			for( j in 0...this.ui.length ) { 
+				this.ui[j].Hide();
+			} // end for
+			
+		} // end else
+	} // end Hide
+	
+	public function Load( scenes : Array<SceneData> ) : Void{ 
+		this.KillScenes();
+		this.LoadingScreen(true);
+		this.scenes = [];
+		for( k in 0...scenes.length ){ 
+			this.scenes.push( new SceneDisplay() );
+			this.scenes[k].Hide();
+			this.scenes[k].Load( scenes[k] );
+		} // end for	
+		this.count = 0;
+		this.LoadingScreen(false);
+	} // end Load
+	
+	public function Scene( ?num : Int ) : SceneDisplay { 
+		if( num == null ){ 
+			return this.scenes[this.count];
+		} // end if
+		else { 
+			this.scenes[this.count].Hide();
+			this.count = num;
+			this.scenes[this.count].Show();
+			return this.scenes[this.count];
+		} // end else
+	} // end Scene
+	
+	public function LoadingDisplay() : LoadingDisplay { 
+		return this.loading;
+	} // end LoadingDisplay
+	public function LoadingScreen( ?flag : Bool ) : Void { 
+		if( flag ) { 
+			this.loading.Show();
+		} // end if
+		else { 
+			this.loading.Hide();
+		} // end else
+	} // end LoadingScreen
+	
+	public override function Remove() : Void { 
+		this.KillScenes();
+		super.Remove();
+	} // end Remove
+	
+	public function End( ?cb : Void -> Void ){ 
+		if( cb == null ) { 
+			for( k in 0...this.ending.length ){ 
+				this.ending[k]();
+			} // end for
+		} // end if
+		else { 
+			this.ending.push(cb);
+		} // end else
+	} // end End
+	
+	public function Next() : SceneDisplay { 
+		this.scenes[this.count].Hide();
+		this.count++;
+		if(this.count >= this.scenes.length){ 
+			this.count--;
+			this.End();
+			return this.scenes[this.count];
+		} // end if
+		else {  
+			this.scenes[this.count].Show();
+			return this.scenes[this.count];
+		} // end else
+	} // end Next
+	
+	public function Previous() : SceneDisplay { 
+		this.scenes[this.count].Hide();
+		this.count--;
+		this.count = this.count < 0 ? 0 : this.count;
+		this.scenes[this.count].Show();
+		return this.scenes[this.count];
+	} // end Previous
+	
+	public function KillScenes() : Void { 
+		for( k in 0...this.scenes.length ){ 
+			this.scenes[k].Remove();
+		} // end for
+		this.scenes = [];
+	} // end Remove
+	
+	public override function Click( ?cb : JqEvent -> Void ) : Void { 
+		if( cb != null ) {
+			for( k in 0...this.scenes.length ) { 
+				this.scenes[k].Click(cb);
+			} // end for 
+			this.ui[0].Click(cb);
+		} // end if
+		else { 
+			super.Click(cb);
+		} // end else
+	} // end Click
+	
 	public static function main(){ 
-		var FUCKINGNIGGERS : String = "j23i2j";
-		
+		var FUCKINGNIGGERS : String = "j23i2j";	
 	} // end main
 } // end Visual Novel

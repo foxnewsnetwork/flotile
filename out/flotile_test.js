@@ -1,5 +1,575 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
+if(typeof unittests=='undefined') unittests = {}
+unittests.UnitTest = function(p) {
+	if( p === $_ ) return;
+	unittests.UnitTest.UnitTests.push(this);
+}
+unittests.UnitTest.__name__ = ["unittests","UnitTest"];
+unittests.UnitTest.main = function() {
+	var vntest = new unittests.VisualNovelTest();
+	var _g1 = 0, _g = unittests.UnitTest.UnitTests.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		unittests.UnitTest.UnitTests[k].IntegrationTest();
+	}
+}
+unittests.UnitTest.prototype.IntegrationTest = function() {
+}
+unittests.UnitTest.prototype.__class__ = unittests.UnitTest;
+if(typeof main=='undefined') main = {}
+main.Element = function(p) {
+	if( p === $_ ) return;
+	this.hides = [];
+	this.shows = [];
+	this.position = { x : 0, y : 0};
+	this.size = { width : 75, height : 75};
+	this.domBody = new js.JQuery("body");
+	this.parent = this.domBody;
+	this.domBody.append("<div id='" + main.Element.NAME + "-" + main.Element.ID + "'></div>");
+	this.domContainer = new js.JQuery("#" + main.Element.NAME + "-" + main.Element.ID);
+	main.Element.ID += 1;
+	this.CSS("z-index","967");
+	this.CSS("position","absolute");
+	js.Lib.window.onresize = (function(el) {
+		return function(e) {
+			el.Track();
+		};
+	})(this);
+}
+main.Element.__name__ = ["main","Element"];
+main.Element.prototype.domContainer = null;
+main.Element.prototype.domBody = null;
+main.Element.prototype.position = null;
+main.Element.prototype.size = null;
+main.Element.prototype.hides = null;
+main.Element.prototype.shows = null;
+main.Element.prototype.parent = null;
+main.Element.prototype.timer = null;
+main.Element.prototype.Track = function() {
+	if(this.parent.length < 1) {
+		this.Remove();
+		return;
+	}
+	if(this.parent.attr("visibility") == "hidden") this.Hide();
+	this.Position(this.position);
+	var scale = this.parent.attr("-moz-transform");
+	if(scale != "") this.CSS("-moz-transform",scale);
+}
+main.Element.prototype.Parent = function(parent) {
+	if(parent == null) return this.parent; else {
+		if(this.parent.length == 0) this.parent = this.domBody;
+		return this.parent;
+	}
+}
+main.Element.prototype.Position = function(pos) {
+	main.Element.TestCounter++;
+	if(pos == null) return this.position;
+	this.position = pos;
+	var offset = { top : this.parent.innerHeight(), left : this.parent.innerWidth()};
+	var x = this.position.x;
+	var y = this.position.y;
+	this.domContainer.css("left",x + "%");
+	this.domContainer.css("top",y + "%");
+	return this.position;
+}
+main.Element.prototype.Size = function(siz) {
+	if(siz == null) return this.size;
+	this.size = siz;
+	this.domContainer.css("width",this.size.width + "%");
+	this.domContainer.css("height",this.size.height + "%");
+	this.domContainer.css("background-size","100% 100%");
+	return this.size;
+}
+main.Element.prototype.Remove = function() {
+	this.Hide();
+	this.domContainer.remove();
+}
+main.Element.prototype.Hide = function(cb) {
+	if(cb == null) this.domContainer.hide(500,(function(element) {
+		return function() {
+			var _g1 = 0, _g = element.hides.length;
+			while(_g1 < _g) {
+				var k = _g1++;
+				element.hides[k]();
+			}
+		};
+	})(this)); else this.hides.push(cb);
+}
+main.Element.prototype.Show = function(cb) {
+	if(cb == null) this.domContainer.show(250,(function(element) {
+		return function() {
+			var _g1 = 0, _g = element.shows.length;
+			while(_g1 < _g) {
+				var k = _g1++;
+				element.shows[k]();
+			}
+		};
+	})(this)); else this.shows.push(cb);
+}
+main.Element.prototype.CSS = function(prop,value) {
+	this.domContainer.css(prop,value);
+}
+main.Element.prototype.HTML = function(html) {
+	if(html == null) return this.domContainer.html();
+	this.domContainer.html(html);
+	return html;
+}
+main.Element.prototype.__class__ = main.Element;
+main.Statistics = function() { }
+main.Statistics.__name__ = ["main","Statistics"];
+main.Statistics.prototype.stats = null;
+main.Statistics.prototype.Stats = null;
+main.Statistics.prototype.ClearStats = null;
+main.Statistics.prototype.__class__ = main.Statistics;
+main.Tile = function(p) {
+	if( p === $_ ) return;
+	this.ClearStats();
+	this.clicks = [];
+	this.mouseovers = [];
+	this.mouseleaves = [];
+	main.Element.call(this);
+	this.CSS("z-index","968");
+}
+main.Tile.__name__ = ["main","Tile"];
+main.Tile.__super__ = main.Element;
+for(var k in main.Element.prototype ) main.Tile.prototype[k] = main.Element.prototype[k];
+main.Tile.prototype.image = null;
+main.Tile.prototype.clicks = null;
+main.Tile.prototype.mouseovers = null;
+main.Tile.prototype.mouseleaves = null;
+main.Tile.prototype.stats = null;
+main.Tile.prototype.Stats = function() {
+	return this.stats;
+}
+main.Tile.prototype.ClearStats = function() {
+	var tempstats = this.stats;
+	this.stats = { mouseover : [], duration : [], click : []};
+	return tempstats;
+}
+main.Tile.prototype.SetAnimation = function(image) {
+	if(image == null) return this.image; else if(this.image == image) return this.image;
+	this.image = image;
+	this.CSS("background-image","url('" + image + "')");
+	return this.image;
+}
+main.Tile.prototype.Click = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.clicks.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.clicks[k](null);
+			this.stats.click.push(haxe.Timer.stamp());
+		}
+	} else {
+		this.clicks.push(cb);
+		this.domContainer.click((function(tile) {
+			return function(e) {
+				tile.Click();
+			};
+		})(this));
+	}
+}
+main.Tile.prototype.Mouseover = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.mouseovers.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.mouseovers[k](null);
+			this.stats.mouseover.push(tools.Timer.Start());
+		}
+	} else {
+		this.mouseovers.push(cb);
+		this.domContainer.mouseover((function(tile) {
+			return function(e) {
+				tile.Mouseover();
+			};
+		})(this));
+	}
+}
+main.Tile.prototype.Mouseleave = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.mouseleaves.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.mouseleaves[k](null);
+			this.stats.duration.push(tools.Timer.Stop());
+		}
+	} else {
+		this.mouseleaves.push(cb);
+		this.domContainer.mouseleave((function(tile) {
+			return function(e) {
+				tile.Mouseleave();
+			};
+		})(this));
+	}
+}
+main.Tile.prototype.__class__ = main.Tile;
+main.Tile.__interfaces__ = [main.Statistics];
+if(typeof character=='undefined') character = {}
+character.CharacterDisplay = function(p) {
+	if( p === $_ ) return;
+	main.Tile.call(this);
+	this.CSS("background-size","100% 100%");
+	this.CSS("background-repeat","no-repeat");
+}
+character.CharacterDisplay.__name__ = ["character","CharacterDisplay"];
+character.CharacterDisplay.__super__ = main.Tile;
+for(var k in main.Tile.prototype ) character.CharacterDisplay.prototype[k] = main.Tile.prototype[k];
+character.CharacterDisplay.prototype.__class__ = character.CharacterDisplay;
+character.DialogueBox = function(p) {
+	if( p === $_ ) return;
+	main.Tile.call(this);
+	this.chats = [];
+	this.speaker = new main.Tile();
+	this.CSS("width","80%");
+	this.CSS("height","35%");
+	this.CSS("position","absolute");
+	this.CSS("left","10%");
+	this.CSS("top","60%");
+	this.CSS("border","2px solid black");
+	this.CSS("background-color","rgb(200,198,225)");
+	this.CSS("opacity","0.85");
+	this.CSS("border-radius","1em");
+	this.CSS("-moz-border-radius","1em");
+	this.CSS("padding","1em");
+	this.CSS("padding-left","2em");
+	this.CSS("padding-right","2em");
+	this.CSS("z-index","950");
+	this.speaker.Size({ width : 15, height : 3});
+	this.speaker.Position({ x : 10, y : 52});
+	this.speaker.CSS("border","2px solid black");
+	this.speaker.CSS("background-color","rgb(200,198,225)");
+	this.speaker.CSS("opacity","0.85");
+	this.speaker.CSS("border-radius","1em");
+	this.speaker.CSS("-moz-border-radius","1em");
+	this.speaker.CSS("padding","0.7em");
+	this.speaker.CSS("z-index","950");
+	this.speaker.CSS("text-align","center");
+	this.speaker.CSS("font-size","1.75em");
+}
+character.DialogueBox.__name__ = ["character","DialogueBox"];
+character.DialogueBox.__super__ = main.Tile;
+for(var k in main.Tile.prototype ) character.DialogueBox.prototype[k] = main.Tile.prototype[k];
+character.DialogueBox.prototype.chats = null;
+character.DialogueBox.prototype.speaker = null;
+character.DialogueBox.prototype.Hide = function(cb) {
+	main.Tile.prototype.Hide.call(this,cb);
+	if(cb == null) this.speaker.Hide();
+}
+character.DialogueBox.prototype.Show = function(cb) {
+	main.Tile.prototype.Show.call(this,cb);
+	if(cb == null) this.speaker.Show();
+}
+character.DialogueBox.prototype.Remove = function() {
+	main.Tile.prototype.Remove.call(this);
+	this.speaker.Remove();
+}
+character.DialogueBox.prototype.Chat = function(chat,speaker) {
+	this.chats.push(chat);
+	this.HTML("<p></p><p id=\"visual-novel-dialogue\">" + chat + "</p>");
+	if(speaker != null) this.speaker.HTML(speaker);
+}
+character.DialogueBox.prototype.Purge = function() {
+}
+character.DialogueBox.prototype.__class__ = character.DialogueBox;
+if(typeof haxe=='undefined') haxe = {}
+haxe.Log = function() { }
+haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.trace = function(v,infos) {
+	js.Boot.__trace(v,infos);
+}
+haxe.Log.clear = function() {
+	js.Boot.__clear_trace();
+}
+haxe.Log.prototype.__class__ = haxe.Log;
+character.VisualNovel = function(p) {
+	if( p === $_ ) return;
+	main.Tile.call(this);
+	this.ending = [];
+	this.scenes = [];
+	this.count = 0;
+	this.ui = [];
+	this.ui.push(new main.Tile());
+	this.loading = new character.LoadingDisplay();
+	this.loading.HTML("<h1>Now Loading...</h1>");
+	this.ui[0].CSS("background-color","rgb(200,198,225)");
+	this.ui[0].Mouseover(function(e) {
+		main.Tooltip.show("Next");
+	});
+	this.ui[0].Mouseleave(function(e) {
+		main.Tooltip.hide();
+	});
+	this.ui[0].CSS("z-index","998");
+	this.ui[0].CSS("opacity","0.65");
+	this.ui[0].CSS("border","2px solid black");
+	this.ui[0].CSS("border-radius","1em");
+	this.ui[0].CSS("-moz-border-radius","1em");
+	this.ui[0].Size({ width : 4, height : 4});
+	this.ui[0].Position({ x : 90, y : 55});
+	this.ui[0].CSS("text-align","center");
+	this.ui[0].HTML(">>>");
+}
+character.VisualNovel.__name__ = ["character","VisualNovel"];
+character.VisualNovel.__super__ = main.Tile;
+for(var k in main.Tile.prototype ) character.VisualNovel.prototype[k] = main.Tile.prototype[k];
+character.VisualNovel.main = function() {
+	var FUCKINGNIGGERS = "j23i2j";
+}
+character.VisualNovel.prototype.scenes = null;
+character.VisualNovel.prototype.count = null;
+character.VisualNovel.prototype.ui = null;
+character.VisualNovel.prototype.loading = null;
+character.VisualNovel.prototype.ending = null;
+character.VisualNovel.prototype.Show = function(cb) {
+	if(cb != null) main.Tile.prototype.Show.call(this,cb); else {
+		this.scenes[this.count].Show();
+		var _g1 = 0, _g = this.ui.length;
+		while(_g1 < _g) {
+			var j = _g1++;
+			this.ui[j].Show();
+		}
+	}
+}
+character.VisualNovel.prototype.Hide = function(cb) {
+	if(cb != null) main.Tile.prototype.Hide.call(this,cb); else {
+		var _g1 = 0, _g = this.scenes.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.scenes[k].Hide();
+		}
+		var _g1 = 0, _g = this.ui.length;
+		while(_g1 < _g) {
+			var j = _g1++;
+			this.ui[j].Hide();
+		}
+	}
+}
+character.VisualNovel.prototype.Load = function(scenes) {
+	this.KillScenes();
+	this.LoadingScreen(true);
+	this.scenes = [];
+	var _g1 = 0, _g = scenes.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		this.scenes.push(new character.SceneDisplay());
+		this.scenes[k].Hide();
+		this.scenes[k].Load(scenes[k]);
+	}
+	this.count = 0;
+	this.LoadingScreen(false);
+}
+character.VisualNovel.prototype.Scene = function(num) {
+	if(num == null) return this.scenes[this.count]; else {
+		this.scenes[this.count].Hide();
+		this.count = num;
+		this.scenes[this.count].Show();
+		return this.scenes[this.count];
+	}
+}
+character.VisualNovel.prototype.LoadingDisplay = function() {
+	return this.loading;
+}
+character.VisualNovel.prototype.LoadingScreen = function(flag) {
+	if(flag) this.loading.Show(); else this.loading.Hide();
+}
+character.VisualNovel.prototype.Remove = function() {
+	this.KillScenes();
+	main.Tile.prototype.Remove.call(this);
+}
+character.VisualNovel.prototype.End = function(cb) {
+	if(cb == null) {
+		var _g1 = 0, _g = this.ending.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.ending[k]();
+		}
+	} else this.ending.push(cb);
+}
+character.VisualNovel.prototype.Next = function() {
+	this.scenes[this.count].Hide();
+	this.count++;
+	if(this.count >= this.scenes.length) {
+		this.count--;
+		this.End();
+		return this.scenes[this.count];
+	} else {
+		this.scenes[this.count].Show();
+		return this.scenes[this.count];
+	}
+}
+character.VisualNovel.prototype.Previous = function() {
+	this.scenes[this.count].Hide();
+	this.count--;
+	this.count = this.count < 0?0:this.count;
+	this.scenes[this.count].Show();
+	return this.scenes[this.count];
+}
+character.VisualNovel.prototype.KillScenes = function() {
+	var _g1 = 0, _g = this.scenes.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		this.scenes[k].Remove();
+	}
+	this.scenes = [];
+}
+character.VisualNovel.prototype.Click = function(cb) {
+	if(cb != null) {
+		var _g1 = 0, _g = this.scenes.length;
+		while(_g1 < _g) {
+			var k = _g1++;
+			this.scenes[k].Click(cb);
+		}
+		this.ui[0].Click(cb);
+	} else main.Tile.prototype.Click.call(this,cb);
+}
+character.VisualNovel.prototype.__class__ = character.VisualNovel;
+haxe.Timer = function(time_ms) {
+	if( time_ms === $_ ) return;
+	var arr = haxe_timers;
+	this.id = arr.length;
+	arr[this.id] = this;
+	this.timerId = window.setInterval("haxe_timers[" + this.id + "].run();",time_ms);
+}
+haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.delay = function(f,time_ms) {
+	var t = new haxe.Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+}
+haxe.Timer.measure = function(f,pos) {
+	var t0 = haxe.Timer.stamp();
+	var r = f();
+	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
+	return r;
+}
+haxe.Timer.stamp = function() {
+	return Date.now().getTime() / 1000;
+}
+haxe.Timer.prototype.id = null;
+haxe.Timer.prototype.timerId = null;
+haxe.Timer.prototype.stop = function() {
+	if(this.id == null) return;
+	window.clearInterval(this.timerId);
+	var arr = haxe_timers;
+	arr[this.id] = null;
+	if(this.id > 100 && this.id == arr.length - 1) {
+		var p = this.id - 1;
+		while(p >= 0 && arr[p] == null) p--;
+		arr = arr.slice(0,p + 1);
+	}
+	this.id = null;
+}
+haxe.Timer.prototype.run = function() {
+}
+haxe.Timer.prototype.__class__ = haxe.Timer;
+if(typeof tools=='undefined') tools = {}
+tools.Timer = function() { }
+tools.Timer.__name__ = ["tools","Timer"];
+tools.Timer.Start = function() {
+	tools.Timer.TIME = haxe.Timer.stamp();
+	return tools.Timer.TIME;
+}
+tools.Timer.Stop = function() {
+	var startTime = tools.Timer.TIME;
+	var difference = tools.Timer.Start() - startTime;
+	return difference;
+}
+tools.Timer.prototype.__class__ = tools.Timer;
+character.LoadingDisplay = function(p) {
+	if( p === $_ ) return;
+	main.Tile.call(this);
+	this.Position({ x : 40, y : 40});
+	this.Size({ width : 25, height : 25});
+	this.Mouseover(function(e) {
+		main.Tooltip.show("Still Loading, buddy");
+	});
+	this.Mouseleave(function(e) {
+		main.Tooltip.hide();
+	});
+}
+character.LoadingDisplay.__name__ = ["character","LoadingDisplay"];
+character.LoadingDisplay.__super__ = main.Tile;
+for(var k in main.Tile.prototype ) character.LoadingDisplay.prototype[k] = main.Tile.prototype[k];
+character.LoadingDisplay.prototype.__class__ = character.LoadingDisplay;
+IntIter = function(min,max) {
+	if( min === $_ ) return;
+	this.min = min;
+	this.max = max;
+}
+IntIter.__name__ = ["IntIter"];
+IntIter.prototype.min = null;
+IntIter.prototype.max = null;
+IntIter.prototype.hasNext = function() {
+	return this.min < this.max;
+}
+IntIter.prototype.next = function() {
+	return this.min++;
+}
+IntIter.prototype.__class__ = IntIter;
+Std = function() { }
+Std.__name__ = ["Std"];
+Std["is"] = function(v,t) {
+	return js.Boot.__instanceof(v,t);
+}
+Std.string = function(s) {
+	return js.Boot.__string_rec(s,"");
+}
+Std["int"] = function(x) {
+	if(x < 0) return Math.ceil(x);
+	return Math.floor(x);
+}
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
+}
+Std.parseFloat = function(x) {
+	return parseFloat(x);
+}
+Std.random = function(x) {
+	return Math.floor(Math.random() * x);
+}
+Std.prototype.__class__ = Std;
+character.BackgroundDisplay = function(p) {
+	if( p === $_ ) return;
+	main.Tile.call(this);
+	this.Size({ width : 100, height : 100});
+	this.Position({ x : 0, y : 0});
+}
+character.BackgroundDisplay.__name__ = ["character","BackgroundDisplay"];
+character.BackgroundDisplay.__super__ = main.Tile;
+for(var k in main.Tile.prototype ) character.BackgroundDisplay.prototype[k] = main.Tile.prototype[k];
+character.BackgroundDisplay.prototype.__class__ = character.BackgroundDisplay;
+main.Tooltip = function() { }
+main.Tooltip.__name__ = ["main","Tooltip"];
+main.Tooltip.show = function(text) {
+	tooltip.show(text);
+}
+main.Tooltip.hide = function() {
+	tooltip.hide();
+}
+main.Tooltip.prototype.__class__ = main.Tooltip;
 if(typeof js=='undefined') js = {}
+js.Lib = function() { }
+js.Lib.__name__ = ["js","Lib"];
+js.Lib.isIE = null;
+js.Lib.isOpera = null;
+js.Lib.document = null;
+js.Lib.window = null;
+js.Lib.alert = function(v) {
+	alert(js.Boot.__string_rec(v,""));
+}
+js.Lib.eval = function(code) {
+	return eval(code);
+}
+js.Lib.setErrorHandler = function(f) {
+	js.Lib.onerror = f;
+}
+js.Lib.prototype.__class__ = js.Lib;
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
@@ -181,278 +751,41 @@ js.Boot.__init = function() {
 	$closure = js.Boot.__closure;
 }
 js.Boot.prototype.__class__ = js.Boot;
-if(typeof main=='undefined') main = {}
-main.Tooltip = function() { }
-main.Tooltip.__name__ = ["main","Tooltip"];
-main.Tooltip.show = function(text) {
-	tooltip.show(text);
-}
-main.Tooltip.hide = function() {
-	tooltip.hide();
-}
-main.Tooltip.prototype.__class__ = main.Tooltip;
-main.Element = function(p) {
+character.SceneDisplay = function(p) {
 	if( p === $_ ) return;
-	this.hides = [];
-	this.shows = [];
-	this.position = { x : 0, y : 0};
-	this.size = { width : 75, height : 75};
-	this.domBody = new js.JQuery("body");
-	this.parent = this.domBody;
-	this.domBody.append("<div id='" + main.Element.NAME + "-" + main.Element.ID + "'></div>");
-	this.domContainer = new js.JQuery("#" + main.Element.NAME + "-" + main.Element.ID);
-	main.Element.ID += 1;
-	this.CSS("z-index","967");
-	this.CSS("position","absolute");
-	js.Lib.window.onresize = (function(el) {
-		return function(e) {
-			el.Track();
-		};
-	})(this);
-}
-main.Element.__name__ = ["main","Element"];
-main.Element.prototype.domContainer = null;
-main.Element.prototype.domBody = null;
-main.Element.prototype.position = null;
-main.Element.prototype.size = null;
-main.Element.prototype.hides = null;
-main.Element.prototype.shows = null;
-main.Element.prototype.parent = null;
-main.Element.prototype.timer = null;
-main.Element.prototype.Track = function() {
-	if(this.parent.length < 1) {
-		this.Remove();
-		return;
-	}
-	if(this.parent.attr("visibility") == "hidden") this.Hide();
-	this.Position(this.position);
-	var scale = this.parent.attr("-moz-transform");
-	if(scale != "") this.CSS("-moz-transform",scale);
-}
-main.Element.prototype.Parent = function(parent) {
-	if(parent == null) return this.parent; else {
-		if(this.parent.length == 0) this.parent = this.domBody;
-		return this.parent;
-	}
-}
-main.Element.prototype.Position = function(pos) {
-	main.Element.TestCounter++;
-	if(pos == null) return this.position;
-	this.position = pos;
-	var offset = { top : this.parent.innerHeight(), left : this.parent.innerWidth()};
-	var x = this.position.x;
-	var y = this.position.y;
-	this.domContainer.css("left",x + "%");
-	this.domContainer.css("top",y + "%");
-	return this.position;
-}
-main.Element.prototype.Size = function(siz) {
-	if(siz == null) return this.size;
-	this.size = siz;
-	this.domContainer.css("width",this.size.width + "%");
-	this.domContainer.css("height",this.size.height + "%");
-	this.domContainer.css("background-size","100% 100%");
-	return this.size;
-}
-main.Element.prototype.Remove = function() {
-	this.Hide();
-	this.domContainer.remove();
-}
-main.Element.prototype.Hide = function(cb) {
-	if(cb == null) this.domContainer.hide(500,(function(element) {
-		return function() {
-			var _g1 = 0, _g = element.hides.length;
-			while(_g1 < _g) {
-				var k = _g1++;
-				element.hides[k]();
-			}
-		};
-	})(this)); else this.hides.push(cb);
-}
-main.Element.prototype.Show = function(cb) {
-	if(cb == null) this.domContainer.show(250,(function(element) {
-		return function() {
-			var _g1 = 0, _g = element.shows.length;
-			while(_g1 < _g) {
-				var k = _g1++;
-				element.shows[k]();
-			}
-		};
-	})(this)); else this.shows.push(cb);
-}
-main.Element.prototype.CSS = function(prop,value) {
-	this.domContainer.css(prop,value);
-}
-main.Element.prototype.HTML = function(html) {
-	if(html == null) return this.domContainer.html();
-	this.domContainer.html(html);
-	return html;
-}
-main.Element.prototype.__class__ = main.Element;
-js.Lib = function() { }
-js.Lib.__name__ = ["js","Lib"];
-js.Lib.isIE = null;
-js.Lib.isOpera = null;
-js.Lib.document = null;
-js.Lib.window = null;
-js.Lib.alert = function(v) {
-	alert(js.Boot.__string_rec(v,""));
-}
-js.Lib.eval = function(code) {
-	return eval(code);
-}
-js.Lib.setErrorHandler = function(f) {
-	js.Lib.onerror = f;
-}
-js.Lib.prototype.__class__ = js.Lib;
-main.Statistics = function() { }
-main.Statistics.__name__ = ["main","Statistics"];
-main.Statistics.prototype.stats = null;
-main.Statistics.prototype.Stats = null;
-main.Statistics.prototype.ClearStats = null;
-main.Statistics.prototype.__class__ = main.Statistics;
-main.Tile = function(p) {
-	if( p === $_ ) return;
-	this.ClearStats();
-	this.clicks = [];
-	this.mouseovers = [];
-	this.mouseleaves = [];
-	main.Element.call(this);
-	this.CSS("z-index","968");
-}
-main.Tile.__name__ = ["main","Tile"];
-main.Tile.__super__ = main.Element;
-for(var k in main.Element.prototype ) main.Tile.prototype[k] = main.Element.prototype[k];
-main.Tile.prototype.image = null;
-main.Tile.prototype.clicks = null;
-main.Tile.prototype.mouseovers = null;
-main.Tile.prototype.mouseleaves = null;
-main.Tile.prototype.stats = null;
-main.Tile.prototype.Stats = function() {
-	return this.stats;
-}
-main.Tile.prototype.ClearStats = function() {
-	var tempstats = this.stats;
-	this.stats = { mouseover : [], duration : [], click : []};
-	return tempstats;
-}
-main.Tile.prototype.SetAnimation = function(image) {
-	if(image == null) return this.image;
-	this.image = image;
-	this.CSS("background-image","url('" + image + "')");
-	return this.image;
-}
-main.Tile.prototype.Click = function(cb) {
-	if(cb == null) {
-		var _g1 = 0, _g = this.clicks.length;
-		while(_g1 < _g) {
-			var k = _g1++;
-			this.clicks[k](null);
-			this.stats.click.push(haxe.Timer.stamp());
-		}
-	} else {
-		this.clicks.push(cb);
-		this.domContainer.click((function(tile) {
-			return function(e) {
-				tile.Click();
-			};
-		})(this));
-	}
-}
-main.Tile.prototype.Mouseover = function(cb) {
-	if(cb == null) {
-		var _g1 = 0, _g = this.mouseovers.length;
-		while(_g1 < _g) {
-			var k = _g1++;
-			this.mouseovers[k](null);
-			this.stats.mouseover.push(tools.Timer.Start());
-		}
-	} else {
-		this.mouseovers.push(cb);
-		this.domContainer.mouseover((function(tile) {
-			return function(e) {
-				tile.Mouseover();
-			};
-		})(this));
-	}
-}
-main.Tile.prototype.Mouseleave = function(cb) {
-	if(cb == null) {
-		var _g1 = 0, _g = this.mouseleaves.length;
-		while(_g1 < _g) {
-			var k = _g1++;
-			this.mouseleaves[k](null);
-			this.stats.duration.push(tools.Timer.Stop());
-		}
-	} else {
-		this.mouseleaves.push(cb);
-		this.domContainer.mouseleave((function(tile) {
-			return function(e) {
-				tile.Mouseleave();
-			};
-		})(this));
-	}
-}
-main.Tile.prototype.__class__ = main.Tile;
-main.Tile.__interfaces__ = [main.Statistics];
-if(typeof character=='undefined') character = {}
-character.VisualNovel = function(p) {
-	if( p === $_ ) return;
-	this.ui_next = new main.Tile();
-	this.ui_next.CSS("background-color","rgb(200,198,225)");
-	this.ui_next.Mouseover(function(e) {
-		main.Tooltip.show("Next");
-	});
-	this.ui_next.Mouseleave(function(e) {
-		main.Tooltip.hide();
-	});
-	this.ui_next.CSS("z-index","998");
-	this.ui_next.CSS("opacity","0.65");
-	this.ui_next.CSS("border","2px solid black");
-	this.ui_next.CSS("border-radius","1em");
-	this.ui_next.CSS("-moz-border-radius","1em");
-	this.ui_next.Size({ width : 4, height : 4});
-	this.ui_next.Position({ x : 90, y : 55});
-	this.ui_next.CSS("text-align","center");
-	this.ui_next.HTML(">>>");
 	this.dialogue = new character.DialogueBox();
 	this.characters = [];
 	this.background = new character.BackgroundDisplay();
 	main.Tile.call(this);
 }
-character.VisualNovel.__name__ = ["character","VisualNovel"];
-character.VisualNovel.__super__ = main.Tile;
-for(var k in main.Tile.prototype ) character.VisualNovel.prototype[k] = main.Tile.prototype[k];
-character.VisualNovel.main = function() {
-	var FUCKINGNIGGERS = "j23i2j";
-}
-character.VisualNovel.prototype.dialogue = null;
-character.VisualNovel.prototype.characters = null;
-character.VisualNovel.prototype.background = null;
-character.VisualNovel.prototype.ui_next = null;
-character.VisualNovel.prototype.Remove = function() {
+character.SceneDisplay.__name__ = ["character","SceneDisplay"];
+character.SceneDisplay.__super__ = main.Tile;
+for(var k in main.Tile.prototype ) character.SceneDisplay.prototype[k] = main.Tile.prototype[k];
+character.SceneDisplay.prototype.dialogue = null;
+character.SceneDisplay.prototype.characters = null;
+character.SceneDisplay.prototype.background = null;
+character.SceneDisplay.prototype.Remove = function() {
 	main.Tile.prototype.Remove.call(this);
 	this.background.Remove();
-	this.ui_next.Remove();
 	var _g1 = 0, _g = this.characters.length;
 	while(_g1 < _g) {
 		var k = _g1++;
 		this.characters[k].Remove();
 	}
 }
-character.VisualNovel.prototype.Hide = function(cb) {
+character.SceneDisplay.prototype.Hide = function(cb) {
 	main.Tile.prototype.Hide.call(this,cb);
 	if(cb == null) {
+		this.dialogue.Hide();
 		this.background.Hide();
 		var _g1 = 0, _g = this.characters.length;
 		while(_g1 < _g) {
 			var k = _g1++;
 			this.characters[k].Hide();
 		}
-		this.ui_next.Hide();
 	}
 }
-character.VisualNovel.prototype.Show = function(cb) {
+character.SceneDisplay.prototype.Show = function(cb) {
 	main.Tile.prototype.Show.call(this,cb);
 	if(cb == null) {
 		this.dialogue.Show();
@@ -462,16 +795,19 @@ character.VisualNovel.prototype.Show = function(cb) {
 			var k = _g1++;
 			this.characters[k].Show();
 		}
-		this.ui_next.Show();
 	}
 }
-character.VisualNovel.prototype.Next = function(cb) {
-	this.ui_next.Click(cb);
+character.SceneDisplay.prototype.Click = function(cb) {
+	this.dialogue.Click(cb);
 }
-character.VisualNovel.prototype.Background = function() {
+character.SceneDisplay.prototype.Background = function() {
 	return this.background;
 }
-character.VisualNovel.prototype.PlayScene = function(scene) {
+character.SceneDisplay.prototype.Transition = function() {
+	this.Hide();
+	this.Show();
+}
+character.SceneDisplay.prototype.Load = function(scene) {
 	if(scene.background != null) {
 		if(scene.background.image != null) {
 			this.background.SetAnimation(scene.background.image);
@@ -504,205 +840,7 @@ character.VisualNovel.prototype.PlayScene = function(scene) {
 		}
 	}
 }
-character.VisualNovel.prototype.__class__ = character.VisualNovel;
-if(typeof haxe=='undefined') haxe = {}
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	js.Boot.__trace(v,infos);
-}
-haxe.Log.clear = function() {
-	js.Boot.__clear_trace();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
-character.CharacterDisplay = function(p) {
-	if( p === $_ ) return;
-	main.Tile.call(this);
-	this.CSS("background-size","100% 100%");
-	this.CSS("background-repeat","no-repeat");
-}
-character.CharacterDisplay.__name__ = ["character","CharacterDisplay"];
-character.CharacterDisplay.__super__ = main.Tile;
-for(var k in main.Tile.prototype ) character.CharacterDisplay.prototype[k] = main.Tile.prototype[k];
-character.CharacterDisplay.prototype.__class__ = character.CharacterDisplay;
-Std = function() { }
-Std.__name__ = ["Std"];
-Std["is"] = function(v,t) {
-	return js.Boot.__instanceof(v,t);
-}
-Std.string = function(s) {
-	return js.Boot.__string_rec(s,"");
-}
-Std["int"] = function(x) {
-	if(x < 0) return Math.ceil(x);
-	return Math.floor(x);
-}
-Std.parseInt = function(x) {
-	var v = parseInt(x,10);
-	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
-}
-Std.parseFloat = function(x) {
-	return parseFloat(x);
-}
-Std.random = function(x) {
-	return Math.floor(Math.random() * x);
-}
-Std.prototype.__class__ = Std;
-haxe.Timer = function(time_ms) {
-	if( time_ms === $_ ) return;
-	var arr = haxe_timers;
-	this.id = arr.length;
-	arr[this.id] = this;
-	this.timerId = window.setInterval("haxe_timers[" + this.id + "].run();",time_ms);
-}
-haxe.Timer.__name__ = ["haxe","Timer"];
-haxe.Timer.delay = function(f,time_ms) {
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-}
-haxe.Timer.measure = function(f,pos) {
-	var t0 = haxe.Timer.stamp();
-	var r = f();
-	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
-	return r;
-}
-haxe.Timer.stamp = function() {
-	return Date.now().getTime() / 1000;
-}
-haxe.Timer.prototype.id = null;
-haxe.Timer.prototype.timerId = null;
-haxe.Timer.prototype.stop = function() {
-	if(this.id == null) return;
-	window.clearInterval(this.timerId);
-	var arr = haxe_timers;
-	arr[this.id] = null;
-	if(this.id > 100 && this.id == arr.length - 1) {
-		var p = this.id - 1;
-		while(p >= 0 && arr[p] == null) p--;
-		arr = arr.slice(0,p + 1);
-	}
-	this.id = null;
-}
-haxe.Timer.prototype.run = function() {
-}
-haxe.Timer.prototype.__class__ = haxe.Timer;
-if(typeof tools=='undefined') tools = {}
-tools.Timer = function() { }
-tools.Timer.__name__ = ["tools","Timer"];
-tools.Timer.Start = function() {
-	tools.Timer.TIME = haxe.Timer.stamp();
-	return tools.Timer.TIME;
-}
-tools.Timer.Stop = function() {
-	var startTime = tools.Timer.TIME;
-	var difference = tools.Timer.Start() - startTime;
-	return difference;
-}
-tools.Timer.prototype.__class__ = tools.Timer;
-character.BackgroundDisplay = function(p) {
-	if( p === $_ ) return;
-	main.Tile.call(this);
-	this.Size({ width : 100, height : 100});
-	this.Position({ x : 0, y : 0});
-}
-character.BackgroundDisplay.__name__ = ["character","BackgroundDisplay"];
-character.BackgroundDisplay.__super__ = main.Tile;
-for(var k in main.Tile.prototype ) character.BackgroundDisplay.prototype[k] = main.Tile.prototype[k];
-character.BackgroundDisplay.prototype.__class__ = character.BackgroundDisplay;
-if(typeof unittests=='undefined') unittests = {}
-unittests.UnitTest = function(p) {
-	if( p === $_ ) return;
-	unittests.UnitTest.UnitTests.push(this);
-}
-unittests.UnitTest.__name__ = ["unittests","UnitTest"];
-unittests.UnitTest.main = function() {
-	var vntest = new unittests.VisualNovelTest();
-	var _g1 = 0, _g = unittests.UnitTest.UnitTests.length;
-	while(_g1 < _g) {
-		var k = _g1++;
-		unittests.UnitTest.UnitTests[k].IntegrationTest();
-	}
-}
-unittests.UnitTest.prototype.IntegrationTest = function() {
-}
-unittests.UnitTest.prototype.__class__ = unittests.UnitTest;
-character.DialogueBox = function(p) {
-	if( p === $_ ) return;
-	main.Tile.call(this);
-	this.chats = [];
-	this.speaker = new main.Tile();
-	this.CSS("width","80%");
-	this.CSS("height","35%");
-	this.CSS("position","absolute");
-	this.CSS("left","10%");
-	this.CSS("top","60%");
-	this.CSS("border","2px solid black");
-	this.CSS("background-color","rgb(200,198,225)");
-	this.CSS("opacity","0.65");
-	this.CSS("border-radius","1em");
-	this.CSS("-moz-border-radius","1em");
-	this.CSS("padding","1em");
-	this.CSS("padding-left","2em");
-	this.CSS("padding-right","2em");
-	this.CSS("z-index","950");
-	this.speaker.Size({ width : 15, height : 3});
-	this.speaker.Position({ x : 10, y : 52});
-	this.speaker.CSS("border","2px solid black");
-	this.speaker.CSS("background-color","rgb(200,198,225)");
-	this.speaker.CSS("opacity","0.65");
-	this.speaker.CSS("border-radius","1em");
-	this.speaker.CSS("-moz-border-radius","1em");
-	this.speaker.CSS("padding","0.7em");
-	this.speaker.CSS("z-index","950");
-	this.speaker.CSS("text-align","center");
-	this.speaker.CSS("font-size","1.5em");
-}
-character.DialogueBox.__name__ = ["character","DialogueBox"];
-character.DialogueBox.__super__ = main.Tile;
-for(var k in main.Tile.prototype ) character.DialogueBox.prototype[k] = main.Tile.prototype[k];
-character.DialogueBox.prototype.chats = null;
-character.DialogueBox.prototype.speaker = null;
-character.DialogueBox.prototype.Hide = function(cb) {
-	main.Tile.prototype.Hide.call(this,cb);
-	if(cb == null) this.speaker.Hide();
-}
-character.DialogueBox.prototype.Show = function(cb) {
-	main.Tile.prototype.Show.call(this,cb);
-	if(cb == null) this.speaker.Show();
-}
-character.DialogueBox.prototype.Remove = function() {
-	main.Tile.prototype.Remove.call(this);
-	this.speaker.Remove();
-}
-character.DialogueBox.prototype.Chat = function(chat,speaker) {
-	this.chats.push(chat);
-	this.HTML("<p id=\"visual-novel-dialogue\">" + chat + "</p>");
-	if(speaker != null) this.speaker.HTML(speaker);
-}
-character.DialogueBox.prototype.Purge = function() {
-}
-character.DialogueBox.prototype.__class__ = character.DialogueBox;
-IntIter = function(min,max) {
-	if( min === $_ ) return;
-	this.min = min;
-	this.max = max;
-}
-IntIter.__name__ = ["IntIter"];
-IntIter.prototype.min = null;
-IntIter.prototype.max = null;
-IntIter.prototype.hasNext = function() {
-	return this.min < this.max;
-}
-IntIter.prototype.next = function() {
-	return this.min++;
-}
-IntIter.prototype.__class__ = IntIter;
+character.SceneDisplay.prototype.__class__ = character.SceneDisplay;
 unittests.VisualNovelTest = function(p) {
 	if( p === $_ ) return;
 	unittests.UnitTest.call(this);
@@ -713,15 +851,20 @@ unittests.VisualNovelTest.__super__ = unittests.UnitTest;
 for(var k in unittests.UnitTest.prototype ) unittests.VisualNovelTest.prototype[k] = unittests.UnitTest.prototype[k];
 unittests.VisualNovelTest.prototype.testsubject = null;
 unittests.VisualNovelTest.prototype.IntegrationTest = function() {
-	var sd = { background : { image : "madotsuki.png"}, foreground : { images : ["madotsuki.png","madotsuki.png"], positions : [{ x : 22, y : 20},{ x : 42, y : 20}], sizes : [{ width : 6, height : 8},{ width : 12, height : 16}]}, text : { speaker : "Madotsuki", content : "Hello World"}};
+	var me = this;
+	var sd1 = { background : { image : "madotsuki.png"}, foreground : { images : ["madotsuki.png","madotsuki.png"], positions : [{ x : 22, y : 20},{ x : 42, y : 20}], sizes : [{ width : 6, height : 8},{ width : 12, height : 16}]}, text : { speaker : "Madotsuki", content : "Hello World"}};
 	var sd2 = { background : { image : "madotsuki.png"}, foreground : { images : ["madotsuki.png","madotsuki.png"], positions : [{ x : 24, y : 50},{ x : 62, y : 20}], sizes : [{ width : 16, height : 18},{ width : 12, height : 16}]}, text : { speaker : "Madotsuki", content : "foobar"}};
-	this.testsubject.PlayScene(sd);
-	this.testsubject.Show();
-	this.testsubject.Next((function(vn,scene) {
+	this.testsubject.LoadingDisplay().SetAnimation("madotsuki.png");
+	this.testsubject.Load([sd1,sd2]);
+	this.testsubject.Scene(0);
+	this.testsubject.Click((function(vn) {
 		return function(e) {
-			vn.PlayScene(scene);
+			vn.Next();
 		};
-	})(this.testsubject,sd2));
+	})(this.testsubject));
+	this.testsubject.End(function() {
+		me.testsubject.Scene(0);
+	});
 }
 unittests.VisualNovelTest.prototype.__class__ = unittests.VisualNovelTest;
 $_ = {}
@@ -739,6 +882,7 @@ js.Boot.__init();
 		return isNaN(i);
 	};
 }
+if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 {
 	var d = Date;
 	d.now = function() {
@@ -784,6 +928,20 @@ js.Boot.__init();
 	d.__name__ = ["Date"];
 }
 {
+	String.prototype.__class__ = String;
+	String.__name__ = ["String"];
+	Array.prototype.__class__ = Array;
+	Array.__name__ = ["Array"];
+	Int = { __name__ : ["Int"]};
+	Dynamic = { __name__ : ["Dynamic"]};
+	Float = Number;
+	Float.__name__ = ["Float"];
+	Bool = { __ename__ : ["Bool"]};
+	Class = { __name__ : ["Class"]};
+	Enum = { };
+	Void = { __ename__ : ["Void"]};
+}
+{
 	js.Lib.document = document;
 	js.Lib.window = window;
 	onerror = function(msg,url,line) {
@@ -825,25 +983,10 @@ js.Boot.__init();
 		}};
 	};
 }
-{
-	String.prototype.__class__ = String;
-	String.__name__ = ["String"];
-	Array.prototype.__class__ = Array;
-	Array.__name__ = ["Array"];
-	Int = { __name__ : ["Int"]};
-	Dynamic = { __name__ : ["Dynamic"]};
-	Float = Number;
-	Float.__name__ = ["Float"];
-	Bool = { __ename__ : ["Bool"]};
-	Class = { __name__ : ["Class"]};
-	Enum = { };
-	Void = { __ename__ : ["Void"]};
-}
-if(typeof(haxe_timers) == "undefined") haxe_timers = [];
+unittests.UnitTest.UnitTests = [];
 main.Element.ID = 0;
 main.Element.NAME = "InGidio-Tile-Element-" + Math.floor(10000 * Math.random());
 main.Element.TestCounter = 0;
-js.Lib.onerror = null;
 tools.Timer.TIME = haxe.Timer.stamp();
-unittests.UnitTest.UnitTests = [];
+js.Lib.onerror = null;
 unittests.UnitTest.main()
