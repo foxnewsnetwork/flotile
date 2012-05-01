@@ -6,8 +6,8 @@ typedef SceneData = {
 	} ,
 	foreground : { 
 		images : Array<String> ,
-		positions : Array<{ x : Int, y : Int }> ,
-		sizes : Array<{ width : Int, height : Int }>
+		positions : Array<{ x : Float, y : Float }> ,
+		sizes : Array<{ width : Float, height : Float }>
 	} ,
 	text : { 
 		speaker : String ,

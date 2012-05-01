@@ -11,7 +11,7 @@ class UnitTest {
 	} // end IntegrationTest
 	public static function main(){ 
 		// TODO: initialize additional tests in here
-		var vntest = new VisualNovelTest();
+		var vntest = new VisualNovelEditorTest();
 		
 		// var shoptest = new ShopTest();
 		

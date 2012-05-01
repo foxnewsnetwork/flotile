@@ -33,8 +33,8 @@ class VisualNovel extends Tile {
 		this.ui[0].CSS("border","2px solid black");
 		this.ui[0].CSS("border-radius", "1em");
 		this.ui[0].CSS( "-moz-border-radius" , "1em" );
-		this.ui[0].Size({ width : 4, height : 4});
-		this.ui[0].Position({ x : 90, y : 55 });
+		this.ui[0].Size({ width : 4.0, height : 4.0});
+		this.ui[0].Position({ x : 87.5, y : 53.0 });
 		this.ui[0].CSS("text-align", "center");
 		this.ui[0].HTML(">>>");
 	} // end new
@@ -171,5 +171,6 @@ class VisualNovel extends Tile {
 	
 	public static function main(){ 
 		var FUCKINGNIGGERS : String = "j23i2j";	
+		
 	} // end main
 } // end Visual Novel

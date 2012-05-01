@@ -4,8 +4,8 @@ import main.Tile;
 class BackgroundDisplay extends Tile {
 	public function new() { 
 		super();
-		this.Size({ width : 100, height : 100 });
-		this.Position({x : 0, y : 0});
+		this.Size({ width : 100.0, height : 100.0 });
+		this.Position({x : 0.0, y : 0.0});
 	} // end new
 	public override function Show( ?cb : Void -> Void ){ 
 		if( this.image == null ){ 

@@ -6,20 +6,29 @@ class Element {
 	public static var NAME : String = "InGidio-Tile-Element-" + Math.floor(10000 * Math.random()); 
 	private var domContainer : JQuery;
 	private var domBody : JQuery;
-	private var position : { x : Int, y : Int };
-	private var size : { width : Int, height : Int };
+	private var position : { x : Float, y : Float };
+	private var size : { width : Float, height : Float };
 	private var hides : Array<Void -> Void>;
 	private var shows : Array<Void -> Void>;
 	private var parent : JQuery; // defaults to body
 	private var timer : haxe.Timer;
+	private var bgcolor : String;
 	
 	public static var TestCounter : Int = 0;
+	
+	public function Highlight( color : String ) { 
+		this.CSS("background-color", color);
+	} // end Highlight
+	
+	public function Lowlight( ) { 
+		this.domContainer.css("background-color", this.bgcolor);
+	} // end Lowlight
 	
 	public function new(){
 		this.hides = [];
 		this.shows = []; 
-		this.position = { x : 0, y : 0 };
-		this.size = { width : 75, height : 75 };
+		this.position = { x : 0.0, y : 0.0 };
+		this.size = { width : 75.0, height : 75.0 };
 		this.domBody = new JQuery( "body" );
 		this.parent = domBody;
 		domBody.append("<div id='" + Element.NAME + "-" + Element.ID + "'></div>");
@@ -75,7 +84,7 @@ class Element {
 	} //end parent
 	
 	// Position is always with respect to the parent
-	public function Position( ?pos : { x : Int, y :Int } ) : { x : Int, y : Int }{ 
+	public function Position( ?pos : { x : Float, y : Float } ) : { x : Float, y : Float }{ 
 		Element.TestCounter++;
 		if( pos == null ){ 
 			return this.position;
@@ -91,7 +100,7 @@ class Element {
 		return this.position;
 	} // end Position
 	
-	public function Size( ?siz : { width : Int, height : Int }) : { width : Int, height : Int }{ 
+	public function Size( ?siz : { width : Float, height : Float }) : { width : Float, height : Float }{ 
 		if( siz == null ){ 
 			return this.size;
 		} // end if
@@ -139,6 +148,9 @@ class Element {
 	
 	public function CSS( prop : String, value : String ) : Void{ 
 		this.domContainer.css( prop, value );
+		if( prop == "background-color" ){ 
+			this.bgcolor = value;
+		} // end if
 	} // end CSS
 	
 	public function HTML( ?html : String ) : String{ 

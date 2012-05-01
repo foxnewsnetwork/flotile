@@ -6,11 +6,20 @@ class SceneDisplay extends Tile {
 	private var characters : Array<CharacterDisplay>;
 	private var background : BackgroundDisplay;
 	
+	public override function EnterEditMode(positioncb : { x : Float, y : Float } -> Void, sizecb : { width : Float, height : Float } -> Void) : Void {
+		for( k in 0...this.characters.length ) { 
+			this.characters[k].EnterEditMode(positioncb, sizecb);
+		} // end for 
+	} // end EnterEditMode
 	public function new(){ 
 		this.characters = [];
 		this.background = new BackgroundDisplay();
 		super();
 	} // end new
+	
+	public function Characters() : Array<CharacterDisplay> { 
+		return this.characters;
+	} // end Characters
 	
 	public override function Remove() : Void{ 
 		super.Remove();

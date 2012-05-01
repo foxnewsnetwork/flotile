@@ -9,6 +9,50 @@ class Tile extends Element, implements Statistics{
 	private var mouseleaves : Array<JqEvent -> Void>;
 	public var stats : { mouseover : Array<Float>, duration : Array<Float>, click : Array<Float> };
 	
+	public function EnterEditMode( positioncb : { x : Float, y : Float } -> Void, sizecb : { width : Float, height : Float } -> Void ) : Void { 
+		// Step 1: Manage mouseover and mouse leave UI
+		this.Mouseover( function(e : JqEvent) { 
+			this.Highlight("rgb(208,210,225)");
+			this.CSS("border", "2px solid blue");
+		} ); // end MouseOver
+		this.Mouseleave(function(e : JqEvent) { 
+			this.Lowlight();
+			this.CSS("border", "none");
+		} ); // end mouseleave
+		
+		// Step 2: Manage click-drag ui
+		var mousedownflag = false, xdiff = 0.0, ydiff = 0.0;
+		this.domContainer.mousedown(function(e:JqEvent){
+			mousedownflag = true; 
+			var body = this.domBody;
+			var mx = 100 * e.pageX / body.width();
+			var my = 100 * e.pageY / body.height();
+			xdiff = mx - this.position.x;
+			ydiff = my - this.position.y;
+		} ); // end mousedown
+		
+		this.domContainer.mousemove(function(e:JqEvent){ 
+			if (mousedownflag) {
+				var dx = xdiff, dy = ydiff;
+				var document = this.domBody; 
+				var mouseX = 100 * e.pageX / document.width();
+				var mouseY = 100 * e.pageY / document.height();
+				
+				this.Position({ x : mouseX - dx, y : mouseY - dy }); // end position
+			} // end if
+			return;
+		} ); //end mousemove
+		this.domContainer.mouseup(function(e:JqEvent){
+			positioncb( this.Position() ); 
+			mousedownflag = false;
+		} ); // end mouseup
+		
+		// Step 3: Inject resize icon
+		// TODO: write me!
+		// Step 4: Manage drag-resize ui 
+		// TODO: write me!
+	} // end EnterEditMode
+		
 	public function new(){
 		this.ClearStats(); 
 		this.clicks = [];
@@ -37,6 +81,7 @@ class Tile extends Element, implements Statistics{
 		this.CSS("background-image", "url('" + image + "')" );
 		return this.image;
 	} // end SetAnimation
+	
 	public function Click( ?cb : JqEvent -> Void ){ 
 		if( cb == null ){ 
 			for( k in 0...this.clicks.length ){ 
