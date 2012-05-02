@@ -1,12 +1,13 @@
 package character;
+import tools.VerticalBar;
 import tools.Toolbar;
 import tools.TextToolbar;
 import main.Tile;
 import js.JQuery;
 
 class VisualNovelEditor extends VisualNovel {
-	private var stock : Toolbar;
-	private var layer : Toolbar;
+	private var stock : VerticalBar;
+	private var layer : VerticalBar;
 	
 	public function SetUI( options : { row : Int, col : Int, num : Int, images : String, callbacks : JqEvent -> Void } ) { 
 		// stock
@@ -30,8 +31,8 @@ class VisualNovelEditor extends VisualNovel {
 	
 	public function new() { 
 		super();
-		this.stock = new Toolbar( { rows : 3, columns : 1 } );
-		this.layer = new Toolbar( { rows : 3, columns : 1 } );
+		this.stock = new VerticalBar( );
+		this.layer = new VerticalBar( );
 		
 		this.stock.Position({ x : 0.0, y : 15.0 } );
 		this.stock.Size( { width : 4.0, height : 80.0 } );
@@ -74,4 +75,9 @@ class VisualNovelEditor extends VisualNovel {
 		} // end for
 		return data;
 	} // end GetState
+	
+	public static function main(){ 
+		var FUCKINGNIGGERS : String = "j23i2j";	
+		
+	} // end main
 }// end class

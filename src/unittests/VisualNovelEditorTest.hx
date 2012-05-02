@@ -58,8 +58,8 @@ class VisualNovelEditorTest extends UnitTest {
 		}); // end SetUI
 		this.testsubject.SetUI({ 
 			num : 0, 
-			col : 0, 
-			row : 1, 
+			col : 1, 
+			row : 0, 
 			images : "madotsuki.png", 
 			callbacks : function(e:JqEvent) { return; } 
 		}); // end SetUI

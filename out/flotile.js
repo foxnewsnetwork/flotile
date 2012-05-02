@@ -31,9 +31,11 @@ main.Element.prototype.timer = null;
 main.Element.prototype.bgcolor = null;
 main.Element.prototype.Highlight = function(color) {
 	this.CSS("background-color",color);
+	this.CSS("opacity","0.65");
 }
 main.Element.prototype.Lowlight = function() {
-	this.domContainer.css("background-color",this.bgcolor);
+	this.domContainer.css("background-color","none");
+	this.CSS("opacity","1");
 }
 main.Element.prototype.Track = function() {
 	if(this.parent.length < 1) {
@@ -132,11 +134,9 @@ main.Tile.prototype.stats = null;
 main.Tile.prototype.EnterEditMode = function(positioncb,sizecb) {
 	var me = this;
 	this.Mouseover(function(e) {
-		me.Highlight("rgb(208,210,225)");
 		me.CSS("border","2px solid blue");
 	});
 	this.Mouseleave(function(e) {
-		me.Lowlight();
 		me.CSS("border","none");
 	});
 	var mousedownflag = false, xdiff = 0.0, ydiff = 0.0;
@@ -419,16 +419,6 @@ character.DialogueBox.prototype.Chat = function(num) {
 character.DialogueBox.prototype.Purge = function() {
 }
 character.DialogueBox.prototype.__class__ = character.DialogueBox;
-if(typeof haxe=='undefined') haxe = {}
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	js.Boot.__trace(v,infos);
-}
-haxe.Log.clear = function() {
-	js.Boot.__clear_trace();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
 character.VisualNovel = function(p) {
 	if( p === $_ ) return;
 	main.Tile.call(this);
@@ -460,9 +450,6 @@ character.VisualNovel = function(p) {
 character.VisualNovel.__name__ = ["character","VisualNovel"];
 character.VisualNovel.__super__ = main.Tile;
 for(var k in main.Tile.prototype ) character.VisualNovel.prototype[k] = main.Tile.prototype[k];
-character.VisualNovel.main = function() {
-	var FUCKINGNIGGERS = "j23i2j";
-}
 character.VisualNovel.prototype.dialogue = null;
 character.VisualNovel.prototype.scenes = null;
 character.VisualNovel.prototype.count = null;
@@ -582,6 +569,70 @@ character.VisualNovel.prototype.Click = function(cb) {
 	} else this.dialogue.Click(cb);
 }
 character.VisualNovel.prototype.__class__ = character.VisualNovel;
+character.VisualNovelEditor = function(p) {
+	if( p === $_ ) return;
+	character.VisualNovel.call(this);
+	this.stock = new tools.VerticalBar();
+	this.layer = new tools.VerticalBar();
+	this.stock.Position({ x : 0.0, y : 15.0});
+	this.stock.Size({ width : 4.0, height : 80.0});
+	this.layer.Position({ x : 95.5, y : 15.0});
+	this.layer.Size({ width : 4.0, height : 80.0});
+}
+character.VisualNovelEditor.__name__ = ["character","VisualNovelEditor"];
+character.VisualNovelEditor.__super__ = character.VisualNovel;
+for(var k in character.VisualNovel.prototype ) character.VisualNovelEditor.prototype[k] = character.VisualNovel.prototype[k];
+character.VisualNovelEditor.main = function() {
+	var FUCKINGNIGGERS = "j23i2j";
+}
+character.VisualNovelEditor.prototype.stock = null;
+character.VisualNovelEditor.prototype.layer = null;
+character.VisualNovelEditor.prototype.SetUI = function(options) {
+	if(options.num == 0) {
+		this.stock.SetIcon({ row : options.row, col : options.col, image : options.images});
+		this.stock.SetClick({ row : options.row, col : options.col, func : options.callbacks});
+	} else if(options.num == 1) {
+		this.layer.SetIcon({ row : options.row, col : options.col, image : options.images});
+		this.layer.SetClick({ row : options.row, col : options.col, func : options.callbacks});
+	} else if(options.num == 2) {
+		this.dialogue.SetIcon({ row : options.row, col : options.col, image : options.images});
+		this.dialogue.SetClick({ row : options.row, col : options.col, func : options.callbacks});
+	}
+}
+character.VisualNovelEditor.prototype.EnterEditMode = function(positioncb,sizecb) {
+	var _g1 = 0, _g = this.scenes.length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		this.scenes[k].EnterEditMode(positioncb,sizecb);
+	}
+	this.dialogue.EnterEditMode(positioncb,sizecb);
+}
+character.VisualNovelEditor.prototype.Keypress = function(func) {
+	this.dialogue.Keypress(func);
+}
+character.VisualNovelEditor.prototype.GetState = function() {
+	var data = { background : { image : this.Scene().Background().SetAnimation()}, foreground : { images : [], positions : [], sizes : []}, text : { content : this.dialogue.Text(), speaker : this.dialogue.Speaker()}};
+	var _g1 = 0, _g = this.Scene().Characters().length;
+	while(_g1 < _g) {
+		var k = _g1++;
+		var character = this.Scene().Characters()[k];
+		data.foreground.images.push(character.SetAnimation());
+		data.foreground.positions.push(character.Position());
+		data.foreground.sizes.push(character.Size());
+	}
+	return data;
+}
+character.VisualNovelEditor.prototype.__class__ = character.VisualNovelEditor;
+if(typeof haxe=='undefined') haxe = {}
+haxe.Log = function() { }
+haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.trace = function(v,infos) {
+	js.Boot.__trace(v,infos);
+}
+haxe.Log.clear = function() {
+	js.Boot.__clear_trace();
+}
+haxe.Log.prototype.__class__ = haxe.Log;
 haxe.Timer = function(time_ms) {
 	if( time_ms === $_ ) return;
 	var arr = haxe_timers;
@@ -706,6 +757,15 @@ character.BackgroundDisplay.prototype.Show = function(cb) {
 	main.Tile.prototype.Show.call(this,cb);
 }
 character.BackgroundDisplay.prototype.__class__ = character.BackgroundDisplay;
+main.Tooltip = function() { }
+main.Tooltip.__name__ = ["main","Tooltip"];
+main.Tooltip.show = function(text) {
+	tooltip.show(text);
+}
+main.Tooltip.hide = function() {
+	tooltip.hide();
+}
+main.Tooltip.prototype.__class__ = main.Tooltip;
 main.InputTile = function(p) {
 	if( p === $_ ) return;
 	main.Tile.call(this);
@@ -734,15 +794,6 @@ main.InputTile.prototype.Text = function(txt) {
 	}
 }
 main.InputTile.prototype.__class__ = main.InputTile;
-main.Tooltip = function() { }
-main.Tooltip.__name__ = ["main","Tooltip"];
-main.Tooltip.show = function(text) {
-	tooltip.show(text);
-}
-main.Tooltip.hide = function() {
-	tooltip.hide();
-}
-main.Tooltip.prototype.__class__ = main.Tooltip;
 if(typeof js=='undefined') js = {}
 js.Lib = function() { }
 js.Lib.__name__ = ["js","Lib"];
@@ -760,6 +811,90 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
 js.Lib.prototype.__class__ = js.Lib;
+tools.Toolbar = function(dim) {
+	if( dim === $_ ) return;
+	main.Tile.call(this);
+	this.Dimension(dim);
+	this.CSS("border","2px solid black");
+	this.CSS("background-color","rgb(200,198,225)");
+	this.CSS("opacity","0.85");
+}
+tools.Toolbar.__name__ = ["tools","Toolbar"];
+tools.Toolbar.__super__ = main.Tile;
+for(var k in main.Tile.prototype ) tools.Toolbar.prototype[k] = main.Tile.prototype[k];
+tools.Toolbar.prototype.dimension = null;
+tools.Toolbar.prototype.vector = null;
+tools.Toolbar.prototype.Dimension = function(dim) {
+	if(dim == null) return this.dimension; else {
+		this.dimension = dim;
+		this.vector = [];
+		var unitx = 85 / dim.columns;
+		var unity = 70 / dim.rows;
+		var _g1 = 0, _g = dim.rows;
+		while(_g1 < _g) {
+			var j = _g1++;
+			this.vector.push([]);
+			var _g3 = 0, _g2 = dim.columns;
+			while(_g3 < _g2) {
+				var k = _g3++;
+				var mytile = new main.Tile();
+				this.vector[j].push(mytile);
+				this.domContainer.append(mytile.domContainer);
+				mytile.Size({ width : unitx, height : unity});
+				mytile.Position({ x : 3 + k * (unitx + 1), y : 10 + j * (unity + 1)});
+				mytile.CSS("border-radius","0.5em");
+				mytile.CSS("-moz-border-radius","0.5em");
+			}
+		}
+		return this.dimension;
+	}
+}
+tools.Toolbar.prototype.SetIcon = function(options) {
+	var row = options.row;
+	var col = options.col;
+	this.vector[row][col].SetAnimation(options.image);
+}
+tools.Toolbar.prototype.SetMouseover = function(options) {
+	this.vector[options.row][options.col].Mouseover(options.func);
+}
+tools.Toolbar.prototype.SetMouseleave = function(options) {
+	this.vector[options.row][options.col].Mouseleave(options.func);
+}
+tools.Toolbar.prototype.SetClick = function(options) {
+	this.vector[options.row][options.col].Click(options.func);
+}
+tools.Toolbar.prototype.__class__ = tools.Toolbar;
+tools.VerticalBar = function(p) {
+	if( p === $_ ) return;
+	tools.Toolbar.call(this,{ rows : 0, columns : 0});
+	this.Length(6);
+}
+tools.VerticalBar.__name__ = ["tools","VerticalBar"];
+tools.VerticalBar.__super__ = tools.Toolbar;
+for(var k in tools.Toolbar.prototype ) tools.VerticalBar.prototype[k] = tools.Toolbar.prototype[k];
+tools.VerticalBar.prototype.Length = function(length) {
+	if(length == null) return this.dimension.columns; else {
+		this.dimension.rows = 1;
+		this.dimension.columns = length;
+		this.vector = [];
+		var unitx = 95.0;
+		var unity = 70.0 / length;
+		this.vector.push([]);
+		var _g = 0;
+		while(_g < length) {
+			var k = _g++;
+			var mytile = new main.Tile();
+			this.vector[0].push(mytile);
+			this.domContainer.append(mytile.domContainer);
+			mytile.Size({ width : unitx, height : unity});
+			mytile.Position({ x : 0.5, y : 10 + k * (unity + 1)});
+			mytile.CSS("border-radius","0.5em");
+			mytile.CSS("-moz-border-radius","0.5em");
+		}
+		return this.dimension.columns;
+	}
+}
+tools.VerticalBar.prototype.__class__ = tools.VerticalBar;
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
@@ -1031,59 +1166,6 @@ character.SceneDisplay.prototype.Load = function(scene) {
 	}
 }
 character.SceneDisplay.prototype.__class__ = character.SceneDisplay;
-tools.Toolbar = function(dim) {
-	if( dim === $_ ) return;
-	main.Tile.call(this);
-	this.Dimension(dim);
-	this.CSS("border","2px solid black");
-	this.CSS("background-color","rgb(200,198,225)");
-	this.CSS("opacity","0.85");
-}
-tools.Toolbar.__name__ = ["tools","Toolbar"];
-tools.Toolbar.__super__ = main.Tile;
-for(var k in main.Tile.prototype ) tools.Toolbar.prototype[k] = main.Tile.prototype[k];
-tools.Toolbar.prototype.dimension = null;
-tools.Toolbar.prototype.vector = null;
-tools.Toolbar.prototype.Dimension = function(dim) {
-	if(dim == null) return this.dimension; else {
-		this.dimension = dim;
-		this.vector = [];
-		var unitx = 85 / dim.columns;
-		var unity = 70 / dim.rows;
-		var _g1 = 0, _g = dim.rows;
-		while(_g1 < _g) {
-			var j = _g1++;
-			this.vector.push([]);
-			var _g3 = 0, _g2 = dim.columns;
-			while(_g3 < _g2) {
-				var k = _g3++;
-				var mytile = new main.Tile();
-				this.vector[j].push(mytile);
-				this.domContainer.append(mytile.domContainer);
-				mytile.Size({ width : unitx, height : unity});
-				mytile.Position({ x : 3 + k * (unitx + 1), y : 10 + j * (unity + 1)});
-				mytile.CSS("border-radius","0.5em");
-				mytile.CSS("-moz-border-radius","0.5em");
-			}
-		}
-		return this.dimension;
-	}
-}
-tools.Toolbar.prototype.SetIcon = function(options) {
-	var row = options.row;
-	var col = options.col;
-	this.vector[row][col].SetAnimation(options.image);
-}
-tools.Toolbar.prototype.SetMouseover = function(options) {
-	this.vector[options.row][options.col].Mouseover(options.func);
-}
-tools.Toolbar.prototype.SetMouseleave = function(options) {
-	this.vector[options.row][options.col].Mouseleave(options.func);
-}
-tools.Toolbar.prototype.SetClick = function(options) {
-	this.vector[options.row][options.col].Click(options.func);
-}
-tools.Toolbar.prototype.__class__ = tools.Toolbar;
 $_ = {}
 js.Boot.__res = {}
 js.Boot.__init();
@@ -1205,4 +1287,4 @@ main.Element.NAME = "InGidio-Tile-Element-" + Math.floor(10000 * Math.random());
 main.Element.TestCounter = 0;
 tools.Timer.TIME = haxe.Timer.stamp();
 js.Lib.onerror = null;
-character.VisualNovel.main()
+character.VisualNovelEditor.main()

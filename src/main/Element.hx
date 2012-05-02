@@ -18,10 +18,12 @@ class Element {
 	
 	public function Highlight( color : String ) { 
 		this.CSS("background-color", color);
+		this.CSS("opacity", "0.65");
 	} // end Highlight
 	
 	public function Lowlight( ) { 
-		this.domContainer.css("background-color", this.bgcolor);
+		this.domContainer.css("background-color", "none");
+		this.CSS("opacity", "1");
 	} // end Lowlight
 	
 	public function new(){

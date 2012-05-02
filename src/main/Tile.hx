@@ -12,11 +12,11 @@ class Tile extends Element, implements Statistics{
 	public function EnterEditMode( positioncb : { x : Float, y : Float } -> Void, sizecb : { width : Float, height : Float } -> Void ) : Void { 
 		// Step 1: Manage mouseover and mouse leave UI
 		this.Mouseover( function(e : JqEvent) { 
-			this.Highlight("rgb(208,210,225)");
+			
 			this.CSS("border", "2px solid blue");
 		} ); // end MouseOver
 		this.Mouseleave(function(e : JqEvent) { 
-			this.Lowlight();
+			
 			this.CSS("border", "none");
 		} ); // end mouseleave
 		

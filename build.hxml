@@ -3,7 +3,7 @@
 # Uncomment the desirable target
 # JavaScript target
  -js out/flotile.js
- -main character.VisualNovel
+ -main character.VisualNovelEditor
 
 # Uncomment to build the test files
 # Javascript target

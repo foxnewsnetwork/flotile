@@ -169,8 +169,4 @@ class VisualNovel extends Tile {
 		} // end else
 	} // end Click
 	
-	public static function main(){ 
-		var FUCKINGNIGGERS : String = "j23i2j";	
-		
-	} // end main
 } // end Visual Novel
